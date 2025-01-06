@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -33,9 +32,7 @@ func main() {
 	defer db_ref.Close()
 
 	clerkSecretKey := os.Getenv("CLERK_SECRET_KEY")
-	fmt.Println("THE KEY: ", clerkSecretKey)
 	clerk.SetKey(clerkSecretKey)
-	fmt.Println("THE CLERK DATA: ", clerk.APIURL)
 
 	app := echo.New()
 
