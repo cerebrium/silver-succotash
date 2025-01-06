@@ -37,7 +37,7 @@ type AuthorizationParams struct {
 
 // Rewritten from: https://github.com/clerk/clerk-sdk-go/blob/v2.0.4/http/middleware.go#L38
 // The syntax for this middleware does not seem to
-// be supported by echo. To this problem, the syntax
+// be supported by echo. To solve this problem, the syntax
 // on the website and api want there to be an
 // Authorization: Bearer <token>... this does not
 // exist from what I can tell. What does exist is
@@ -95,16 +95,16 @@ func WithHeaderAuthorizationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return cc.HTML(http.StatusBadRequest, Make404Html())
 		}
 
-		fmt.Println("The params: ", params)
+		params.Token = token
+		fmt.Println("THE JWKSClient: ", params.JWKSClient)
 		if params.JWK == nil {
 			params.JWK, err = getJWK(cc.Request().Context(), params.JWKSClient, decoded.KeyID, params.Clock)
 			if err != nil {
-
 				cc.Logger().Error(err)
 				return cc.HTML(http.StatusBadRequest, Make404Html())
 			}
 		}
-		params.Token = token
+
 		claims, err := jwt.Verify(cc.Request().Context(), &params.VerifyParams)
 		if err != nil {
 			cc.Logger().Error(err)
@@ -135,6 +135,8 @@ func getJWK(ctx context.Context, jwksClient *jwks.Client, kid string, clock cler
 	}
 
 	jwk := getCache().get(kid)
+	fmt.Println("THE JWK: ", jwk)
+	fmt.Println("THE CLIENT: ", jwksClient)
 	if jwk == nil || !getCache().isValid(kid, clock.Now().UTC()) {
 		var err error
 		jwk, err = jwt.GetJSONWebKey(ctx, &jwt.GetJSONWebKeyParams{
@@ -219,9 +221,11 @@ func Make404Html() string {
 
           <head>
             <title>
-              Dashboard
+             404 
             </title>
             <meta charset="UTF-8" />
+
+			      <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_Zmx5aW5nLWNvcmFsLTgyLmNsZXJrLmFjY291bnRzLmRldiQ" src="https://flying-coral-82.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <!-- Clerk Publishable key and Frontend API URL -->
             <link href="/assets/css/output.css" rel="stylesheet" />
@@ -229,6 +233,8 @@ func Make404Html() string {
           </head>
 
           <body>
+
+						<button type="button" id="user-menu-button" aria-expanded="false"></button>
             <section class="bg-white dark:bg-gray-900">
               <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
                 <h1
@@ -253,5 +259,8 @@ func Make404Html() string {
             </section>
           </body>
           </html>
+          <script src="/assets/js/index.js"></script>
+			    <script src="/assets/js/dashboard.js"></script>
+
           `
 }
