@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#theme-toggle {
+  margin-top: 3px;
+}
+#black_cover_modal {
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+#main_container {
+  height: 92vh;
+}

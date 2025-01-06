@@ -1,0 +1,57 @@
+package index
+
+templ Index() {
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    Dashboard
+  </title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Clerk Publishable key and Frontend API URL -->
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_Zmx5aW5nLWNvcmFsLTgyLmNsZXJrLmFjY291bnRzLmRldiQ"
+    src="https://flying-coral-82.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    type="text/javascript"></script>
+  <script src="/assets/js/htmx.min.js"></script>
+  <link href="/assets/css/output.css" rel="stylesheet" />
+  <!-- This is the flowbite darkmode script -->
+  <script>
+    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  </script>
+</head>
+
+<body
+  style="width: 100vw; height: 100vh; display: flex; justify-content: center; margin-top: 100px; background-color: rgb(48, 25, 52);">
+  <div id="app"></div>
+</body>
+// Start of clerk code
+<script>
+  window.addEventListener("load", async function () {
+    await Clerk.load();
+
+    if (Clerk.user) {
+
+      // If there is a user we want to 
+      // Route to the dashboard
+      return window.location.href = 'http://localhost:42069/v1/dashboard';
+    }
+
+    document.getElementById("app").innerHTML = `
+        <div id="sign-in"></div>
+      `;
+    const signInDiv = document.getElementById("sign-in");
+
+    Clerk.mountSignIn(signInDiv);
+  });
+</script>
+
+</html>
+}
