@@ -5,9 +5,7 @@ type UploadPdfBody struct {
 }
 
 type UploadPfdFile struct {
-	LastModified int64  `json:"lastModified"`
-	Name         string `json:"name"`
-	Size         int16  `json:"size"`
-	Type         string `json:"type"`
-	File         string `json:"file"`
+	Name string `json:"name"`
+	Size int64  `json:"size"`
+	Type string `json:"type"`
 }

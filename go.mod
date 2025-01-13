@@ -3,6 +3,7 @@ module hopdf.com
 go 1.23.4
 
 require (
+	github.com/ConvertAPI/convertapi-go v0.0.0-20240828091707-02fcb9e18965
 	github.com/a-h/templ v0.3.819
 	github.com/clerk/clerk-sdk-go/v2 v2.0.4
 	github.com/google/uuid v1.6.0
@@ -24,7 +25,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/pdfcpu/pdfcpu v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.20.5 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.61.0 // indirect

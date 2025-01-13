@@ -85,7 +85,7 @@ class UploadFile {
         link.textContent = "download";
 
         download.append(link);
-        link.click();
+        // link.click();
 
         status.textContent = "success";
       }
@@ -158,21 +158,13 @@ class UploadFile {
    * @throws {Error}
    */
   async handle_formatting_file(file) {
-    const reader = new FileReader();
-
-    reader.onload = async (e) => {
-      const base64PDF = e.target.result.split(",")[1];
-    };
-
-    reader.readAsDataURL(file);
+    const endpoint = "/pdf_upload";
     let current_domain = window.location.href;
+
     current_domain = current_domain.replace("dashboard", "api");
 
-    const endpoint = "/pdf_upload";
-
     const form_data = new FormData();
-
-    form_data.file = file;
+    form_data.append("file", file);
 
     console.log("form_data: ", form_data);
     return fetch(current_domain + endpoint, {
