@@ -14,6 +14,8 @@ import (
 func convert_pdf_to_text(filename string) ([][]string, error) {
 	// Get the current working directory
 
+	// Please don't take all my pdf's... Its really not 
+	// a big thing, but still. 
 	config.Default = config.NewDefault("token_QksTJT7R")
 
 	filePath := filepath.Join("./uploads", filename)
