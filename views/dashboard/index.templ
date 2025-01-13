@@ -74,7 +74,11 @@ templ Dashboard() {
       </div>
     </div>
   </nav>
-  <main class="p-4" id="main_container">
+  <main class="p-4 flex justify-center" id="main_container">
+    <section class="w-9/12">
+      @components.PdfUpload()
+      @components.UploadedList()
+    </section>
     @components.Footer()
   </main>
   <script src="/assets/js/index.js"></script>

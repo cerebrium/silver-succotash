@@ -96,7 +96,6 @@ func WithHeaderAuthorizationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		params.Token = token
-		fmt.Println("THE JWKSClient: ", params.JWKSClient)
 		if params.JWK == nil {
 			params.JWK, err = getJWK(cc.Request().Context(), params.JWKSClient, decoded.KeyID, params.Clock)
 			if err != nil {
@@ -135,8 +134,6 @@ func getJWK(ctx context.Context, jwksClient *jwks.Client, kid string, clock cler
 	}
 
 	jwk := getCache().get(kid)
-	fmt.Println("THE JWK: ", jwk)
-	fmt.Println("THE CLIENT: ", jwksClient)
 	if jwk == nil || !getCache().isValid(kid, clock.Now().UTC()) {
 		var err error
 		jwk, err = jwt.GetJSONWebKey(ctx, &jwt.GetJSONWebKeyParams{

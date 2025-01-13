@@ -13,3 +13,9 @@
 #main_container {
   height: 92vh;
 }
+
+.download {
+  text-align: right;
+  padding-right: 1.5rem;
+  color: white;
+}

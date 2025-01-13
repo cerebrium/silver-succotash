@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"hopdf.com/api/pdfcsv"
 	"hopdf.com/db"
 	"hopdf.com/localware"
 
@@ -86,6 +87,10 @@ func main() {
 
 	authApp.GET("/dashboard", func(c echo.Context) error {
 		return dashboard.DashboardHandler(c)
+	})
+
+	authApp.POST("/api/pdf_upload", func(c echo.Context) error {
+		return pdfcsv.UploadHandler(c)
 	})
 
 	authApp.GET("/metrics", echoprometheus.NewHandler()) // adds route to serve gathered metrics
