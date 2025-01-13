@@ -76,12 +76,14 @@ class UploadFile {
          *
          */
 
+        const new_name = name.replace("\.pdf", "\.csv");
+
         const blob = new Blob(body.csv, { type: "text/plain" });
         const download_url = URL.createObjectURL(blob);
 
         const link = document.createElement("a");
         link.href = download_url;
-        link.download = name;
+        link.download = new_name;
         link.textContent = "download";
 
         download.append(link);

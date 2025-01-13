@@ -60,7 +60,7 @@ func main() {
 
 	// CORS
 	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:42069"},
+		AllowOrigins: []string{"http://localhost:42069", "https://crane-evident-mako.ngrok-free.app/"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 

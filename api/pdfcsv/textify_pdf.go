@@ -2,12 +2,13 @@ package pdfcsv
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
+	convertapi "github.com/ConvertAPI/convertapi-go/pkg"
 	"github.com/ConvertAPI/convertapi-go/pkg/config"
+	"github.com/ConvertAPI/convertapi-go/pkg/param"
 )
 
 func convert_pdf_to_text(filename string) ([][]string, error) {
@@ -19,9 +20,9 @@ func convert_pdf_to_text(filename string) ([][]string, error) {
 	txt_file := strings.Replace(filePath, ".pdf", ".txt", -1)
 	txt_file_destination := filepath.Join(txt_file)
 
-	// convertapi.ConvDef("pdf", "txt",
-	// 	param.NewPath("File", "filepath", nil),
-	// ).ToPath("txt_file_destination")
+	convertapi.ConvDef("pdf", "txt",
+		param.NewPath("File", "filepath", nil),
+	).ToPath("txt_file_destination")
 
 	final_data_matrix, err := parse_text_file_created(txt_file_destination)
 	if err != nil {
@@ -113,8 +114,7 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	var current_dataset []string
 
 	for i := 0; i < len(split_values); i++ {
-		if i%number_of_drivers == 0 {
-			fmt.Println("inside here: ", current_dataset)
+		if i%number_of_drivers == 0 && i != 0 {
 			driver_data_matrix = append(driver_data_matrix, current_dataset)
 			// Reset the next array write
 
@@ -129,6 +129,11 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 	// Make the actual lines of data
 	var final_data_matrix [][]string
+
+	// We expect the last array to be absolute bogus
+	if len(driver_data_matrix[len(driver_data_matrix)-1]) < len(driver_data_matrix[0]) {
+		driver_data_matrix = driver_data_matrix[:len(driver_data_matrix)-1]
+	}
 
 	for i := 0; i < number_of_drivers; i++ {
 		for x := 0; x < len(driver_data_matrix); x++ {

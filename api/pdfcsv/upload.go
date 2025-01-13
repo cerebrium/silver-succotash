@@ -1,13 +1,10 @@
 package pdfcsv
 
 import (
-	"bufio"
-	"encoding/csv"
 	"errors"
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -20,15 +17,11 @@ import (
 // to have a pdf in it. The pdf will have a table that
 // needs to be parsed.
 func UploadHandler(c echo.Context) error {
-	pdf, err := handler(c)
+	csv, err := handler(c)
 	if err != nil {
 		c.Logger().Error(err)
 		return err
 	}
-
-	fmt.Println("the pdf: ", pdf)
-
-	csv := []string{"a", "b", "c"}
 
 	csv_obj := &pdfcsv.PdfCsv{
 		Csv: csv,
@@ -37,7 +30,7 @@ func UploadHandler(c echo.Context) error {
 	return helpers.Success(c, csv_obj)
 }
 
-func handler(c echo.Context) (*UploadPfdFile, error) {
+func handler(c echo.Context) ([]string, error) {
 	// Retrieve the file from the form
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
@@ -50,8 +43,6 @@ func handler(c echo.Context) (*UploadPfdFile, error) {
 		return nil, err
 	}
 	defer file.Close()
-
-	fmt.Println("the actual file: ", file)
 
 	// Get file metadata
 	fileData := UploadPfdFile{
@@ -77,11 +68,12 @@ func handler(c echo.Context) (*UploadPfdFile, error) {
 		return nil, err
 	}
 
-	// process_data(fileHeader.Filename)
+	csv_to_write, err := process_data(final_data_set, fileData.Name)
+	if err != nil {
+		return nil, err
+	}
 
-	fmt.Println("file data: ", fileData)
-
-	return &fileData, nil
+	return csv_to_write, nil
 }
 
 // THIS IS THE TS CONVERT... REVISIT THIS AND MAKE SURE
@@ -103,19 +95,30 @@ var percentMap = PercentMap{
 	"dex_val":      0.1,
 }
 
-func process_data(file_name string) {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Which station is this?\n")
-	station, _ := reader.ReadString('\n')
-	station = strings.TrimSpace(station)
+func process_data(final_data_set [][]string, file_name string) ([]string, error) {
+	trimmed_file_name := strings.TrimSpace(file_name)
 
-	err := calculateStatuses(station, file_name)
-	if err != nil {
-		fmt.Println("Error:", err)
+	stations_list := []string{"DRG2", "DSN1", "DBS3", "DBS2", "DEX2", "DCF1", "DSA1"}
+
+	var station string
+
+	for i := 0; i < len(stations_list); i++ {
+		if strings.Contains(trimmed_file_name, stations_list[i]) {
+			station = stations_list[i]
+		}
 	}
+
+	csv_to_write, err := calculateStatuses(station, final_data_set)
+	if err != nil {
+		return nil, err
+	}
+
+	return csv_to_write, nil
 }
 
-func calculateStatuses(station string, file_name string) error {
+func calculateStatuses(station string, final_data_set [][]string) ([]string, error) {
+	final_csv := []string{"Transporter ID, Delivered, DCR, DNR DPMO, POD, CC, CE, DEX, FOCUS AREA\n"}
+
 	dnrFan, dnrGreat, dnrFair := 1100, 1100, 1100
 
 	switch station {
@@ -134,38 +137,15 @@ func calculateStatuses(station string, file_name string) error {
 	case "DSA1":
 		dnrFan, dnrGreat, dnrFair = 1200, 1400, 1850
 	default:
-		return errors.New("station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1")
+		return nil, errors.New("station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1")
 	}
-
-	filePath := filepath.Join("uploads", file_name)
-
-	csv_name := strings.Replace(filePath, ".pdf", ".csv", -1)
-	writeFileDestination := filepath.Join("finished_csv", csv_name)
-
-	file, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	writer, err := os.OpenFile(writeFileDestination, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-	defer writer.Close()
-
-	reader := csv.NewReader(file)
-	reader.FieldsPerRecord = -1
 
 	var totalCount int
 
 	fantastic, great, fair, poor := 22.0, 20.5, 18.0, 13.0
 
-	for {
-		line, err := reader.Read()
-		if err != nil {
-			break
-		}
+	for i := 0; i < len(final_data_set); i++ {
+		line := final_data_set[i]
 
 		totalCount++
 		currentRating := 0.0
@@ -309,10 +289,10 @@ func calculateStatuses(station string, file_name string) error {
 		// Determine status
 		status := determineStatus(currentRating)
 		content := fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", line[0], status, line[2], dcr, dnrDpmo, pod, cc, ce, dex)
-		_, _ = writer.WriteString(content)
+		final_csv = append(final_csv, content)
 	}
 
-	return nil
+	return final_csv, nil
 }
 
 func determineStatus(rating float64) string {
