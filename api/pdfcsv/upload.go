@@ -134,6 +134,9 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 		dnrFan, dnrGreat, dnrFair = 1200, 1400, 1800
 	case "DSA1":
 		dnrFan, dnrGreat, dnrFair = 1200, 1400, 1850
+	case "DPO1":
+		dnrFan, dnrGreat, dnrFair = 1500, 1800, 2299
+
 	default:
 		return nil, errors.New("station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1")
 	}

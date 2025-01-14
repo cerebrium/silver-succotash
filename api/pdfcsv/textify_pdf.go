@@ -2,7 +2,7 @@ package pdfcsv
 
 import (
 	"bufio"
-	"fmt"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -115,7 +115,26 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 		// The second list starts with an empty space
 		for i := 0; i < len(result[m_idx]); i++ {
-			if m_idx > 0 {
+			if m_idx > 0 && m_idx > len(driver_numbers)-1 {
+				// We should be able to walk down the array here
+				// to find the next list of driver id's and create
+				// our count
+				q := 0
+				for {
+					if q == len(result[m_idx]) {
+
+						err := errors.New("could not find next driver id list")
+						return nil, err
+					}
+					if strings.TrimSpace(result[m_idx][q]) != "" {
+						next_page_driver_count := len(strings.Fields(result[m_idx][q]))
+
+						driver_numbers = append(driver_numbers, next_page_driver_count)
+						break
+					}
+					q++
+				}
+
 				if strings.TrimSpace(result[m_idx][i]) == "" {
 					continue
 				}
@@ -125,7 +144,6 @@ func parse_text_file_created(filename string) ([][]string, error) {
 					first_break = true
 					// This should get the length of each slice in the matrix
 					number_of_drivers = len(strings.Fields(result[m_idx][i+1]))
-					fmt.Println("\n\n\n what is the driver number: ", number_of_drivers, "\n\n\n---")
 					driver_numbers = append(driver_numbers, number_of_drivers)
 				}
 				continue
@@ -153,8 +171,6 @@ func parse_text_file_created(filename string) ([][]string, error) {
 		driver_data_matrix = append(driver_data_matrix, []string{})
 	}
 
-	fmt.Println("\n\n what are the driver_numbers: ", driver_numbers, "\n\n\n ------")
-
 	// split the strings, and write to the matrix
 	for str_idx := 0; str_idx < len(final_strings); str_idx++ {
 		final_string := final_strings[str_idx]
@@ -177,8 +193,6 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 	}
 
-	fmt.Println("\n\n AFTER THE SPLIT\n\n --", driver_data_matrix, "\n\n--")
-
 	current_dataset := []string{}
 
 	// Make the actual lines of data
@@ -197,8 +211,6 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 		current_dataset = []string{}
 	}
-
-	fmt.Println("\n\n FINAL DATA MATRIX\n\n --", final_data_matrix, "\n\n--")
 
 	return final_data_matrix, nil
 }
