@@ -19,7 +19,9 @@ func convert_pdf_to_text(filename string) ([][]string, error) {
 	txt_file := strings.Replace(filePath, ".pdf", ".txt", -1)
 	txt_file_destination := filepath.Join(txt_file)
 
-	config.Default = config.NewDefault("secret_s3gBlp6LwFNub5S7")
+	// Please don't take all my pdf's... Its really not
+	// a big thing, but still.
+	config.Default = config.NewDefault("token_QksTJT7R")
 
 	_, err_arr := convertapi.ConvDef("pdf", "txt",
 		param.NewPath("File", filePath, nil),
