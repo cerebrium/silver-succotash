@@ -2,6 +2,7 @@ package pdfcsv
 
 import (
 	"bufio"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,9 +23,17 @@ func convert_pdf_to_text(filename string) ([][]string, error) {
 	txt_file := strings.Replace(filePath, ".pdf", ".txt", -1)
 	txt_file_destination := filepath.Join(txt_file)
 
-	convertapi.ConvDef("pdf", "txt",
-		param.NewPath("File", "filepath", nil),
-	).ToPath("txt_file_destination")
+	// Please don't take all my pdf's... Its really not
+	// a big thing, but still.
+	config.Default = config.NewDefault("token_QksTJT7R")
+
+	_, err_arr := convertapi.ConvDef("pdf", "txt",
+		param.NewPath("File", filePath, nil),
+	).ToPath(txt_file_destination)
+
+	if err_arr != nil {
+		return nil, err_arr[0]
+	}
 
 	final_data_matrix, err := parse_text_file_created(txt_file_destination)
 	if err != nil {
@@ -42,9 +51,13 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	defer txt_file_to_parse.Close()
 
 	scanner := bufio.NewScanner(txt_file_to_parse)
-	var result []string
+	var result [][]string
 	var isCapturing bool
 	var foundTransporterId bool
+	current_page_idx := 0
+
+	// Add the first slice to the matrix
+	result = append(result, []string{})
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -60,7 +73,17 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 		// If we are capturing, add the line to result
 		if isCapturing {
-			result = append(result, " "+line)
+			result[current_page_idx] = append(result[current_page_idx], " "+line)
+		}
+
+		if isCapturing && strings.Contains(line, "Page") {
+			// This means there are multiple pages of content
+			// The content comes in the same order on each page.
+			// We will need to write it in the same way to a different
+			// results slice.
+			result = append(result, []string{})
+			current_page_idx++
+			continue
 		}
 
 		// Stop capturing if 'Drivers With Working Hour Exceptions' is found
@@ -85,59 +108,107 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	*
 	 */
 
-	var final_string string
+	// Build the slice of string
+	final_strings := []string{}
 	first_break := false
 	var number_of_drivers int
+	driver_numbers := []int{}
 
-	for i := 0; i < len(result); i++ {
-		if !first_break {
-			if strings.TrimSpace(result[i]) == "" {
-				first_break = true
-				number_of_drivers = len(strings.Fields(result[i+1]))
+	// There is a 'page n' in here, but if we append it to the last
+	// list, then we can ignore it
+	for m_idx := 0; m_idx < len(result)-1; m_idx++ {
+		final_strings = append(final_strings, "")
+
+		// The second list starts with an empty space
+		for i := 0; i < len(result[m_idx]); i++ {
+			if m_idx > 0 && m_idx > len(driver_numbers)-1 {
+				// We should be able to walk down the array here
+				// to find the next list of driver id's and create
+				// our count
+				q := 0
+				for {
+					if q == len(result[m_idx]) {
+
+						err := errors.New("could not find next driver id list")
+						return nil, err
+					}
+					if strings.TrimSpace(result[m_idx][q]) != "" {
+						next_page_driver_count := len(strings.Fields(result[m_idx][q]))
+
+						driver_numbers = append(driver_numbers, next_page_driver_count)
+						break
+					}
+					q++
+				}
+
+				if strings.TrimSpace(result[m_idx][i]) == "" {
+					continue
+				}
 			}
-			continue
-		}
+			if !first_break {
+				if strings.TrimSpace(result[m_idx][i]) == "" {
+					first_break = true
+					// This should get the length of each slice in the matrix
+					number_of_drivers = len(strings.Fields(result[m_idx][i+1]))
+					driver_numbers = append(driver_numbers, number_of_drivers)
+				}
+				continue
+			}
 
-		final_string += result[i]
-		if strings.TrimSpace(result[i]) == "" {
-			break
+			// The pages past the first never create a driver number
+
+			if strings.Contains(result[m_idx][i], "Page") {
+				break
+			}
+
+			final_strings[m_idx] += result[m_idx][i]
+			if strings.TrimSpace(result[m_idx][i]) == "" {
+				break
+			}
+
 		}
 	}
 
-	// These are the actual table values we want
-	split_values := strings.Fields(final_string)
+	driver_data_matrix := [][]string{}
 
-	// remove the percent signs
-	for i, str := range split_values {
-		split_values[i] = strings.ReplaceAll(str, "%", "")
+	// We need to pop the last element off,
+	// so using a slice, not an array.
+	for i := 0; i < 10; i++ {
+		driver_data_matrix = append(driver_data_matrix, []string{})
 	}
 
-	var driver_data_matrix [][]string
-	var current_dataset []string
+	// split the strings, and write to the matrix
+	for str_idx := 0; str_idx < len(final_strings); str_idx++ {
+		final_string := final_strings[str_idx]
+		// These are the actual table values we want
+		split_values := strings.Fields(final_string)
 
-	for i := 0; i < len(split_values); i++ {
-		if i%number_of_drivers == 0 && i != 0 {
-			driver_data_matrix = append(driver_data_matrix, current_dataset)
-			// Reset the next array write
-
-			current_dataset = []string{}
+		// remove the percent signs
+		for i, str := range split_values {
+			split_values[i] = strings.ReplaceAll(str, "%", "")
 		}
 
-		current_dataset = append(current_dataset, split_values[i])
-	}
-	driver_data_matrix = append(driver_data_matrix, current_dataset)
+		m_idx := 0
+		for i := 0; i < len(split_values); i++ {
+			if i%driver_numbers[str_idx] == 0 && i != 0 {
+				m_idx++
+			}
 
-	current_dataset = []string{}
+			driver_data_matrix[m_idx] = append(driver_data_matrix[m_idx], split_values[i])
+		}
+
+	}
+
+	current_dataset := []string{}
 
 	// Make the actual lines of data
 	var final_data_matrix [][]string
 
 	// We expect the last array to be absolute bogus
-	if len(driver_data_matrix[len(driver_data_matrix)-1]) < len(driver_data_matrix[0]) {
-		driver_data_matrix = driver_data_matrix[:len(driver_data_matrix)-1]
-	}
+	driver_data_matrix = driver_data_matrix[:9]
 
-	for i := 0; i < number_of_drivers; i++ {
+	// We need to group the data by driver
+	for i := 0; i < len(driver_data_matrix[0]); i++ {
 		for x := 0; x < len(driver_data_matrix); x++ {
 			current_dataset = append(current_dataset, driver_data_matrix[x][i])
 		}

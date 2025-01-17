@@ -47,8 +47,6 @@ func handler(c echo.Context) ([]string, error) {
 	// Get file metadata
 	fileData := UploadPfdFile{
 		Name: fileHeader.Filename,
-		Size: fileHeader.Size,
-		Type: fileHeader.Header.Get("Content-Type"),
 	}
 
 	dst, err := os.Create(fmt.Sprintf("./uploads/%s", fileHeader.Filename))
@@ -117,7 +115,7 @@ func process_data(final_data_set [][]string, file_name string) ([]string, error)
 }
 
 func calculateStatuses(station string, final_data_set [][]string) ([]string, error) {
-	final_csv := []string{"Transporter ID, Delivered, DCR, DNR DPMO, POD, CC, CE, DEX, FOCUS AREA\n"}
+	final_csv := []string{"Transporter ID, Status, Delivered, DCR, DNR DPMO, POD, CC, CE, DEX, FOCUS AREA\n"}
 
 	dnrFan, dnrGreat, dnrFair := 1100, 1100, 1100
 
@@ -136,6 +134,9 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 		dnrFan, dnrGreat, dnrFair = 1200, 1400, 1800
 	case "DSA1":
 		dnrFan, dnrGreat, dnrFair = 1200, 1400, 1850
+	case "DPO1":
+		dnrFan, dnrGreat, dnrFair = 1500, 1800, 2299
+
 	default:
 		return nil, errors.New("station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1")
 	}
@@ -152,12 +153,12 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 		dontInclude := []string{}
 
 		// Extract and parse fields
-		dcr := line[3]
-		dnrDpmo := line[4]
-		pod := line[5]
-		cc := line[6]
-		ce := line[7]
-		dex := line[8]
+		dcr := line[2]
+		dnrDpmo := line[3]
+		pod := line[4]
+		cc := line[5]
+		ce := line[6]
+		dex := line[7]
 
 		// Process DCR
 		var dcrVal float64
@@ -288,7 +289,7 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 
 		// Determine status
 		status := determineStatus(currentRating)
-		content := fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", line[0], status, line[2], dcr, dnrDpmo, pod, cc, ce, dex)
+		content := fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", line[0], status, line[1], dcr, dnrDpmo, pod, cc, ce, dex, line[len(line)-1])
 		final_csv = append(final_csv, content)
 	}
 
