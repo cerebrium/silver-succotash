@@ -96,7 +96,7 @@ var percentMap = PercentMap{
 func process_data(final_data_set [][]string, file_name string) ([]string, error) {
 	trimmed_file_name := strings.TrimSpace(file_name)
 
-	stations_list := []string{"DRG2", "DSN1", "DBS3", "DBS2", "DEX2", "DCF1", "DSA1"}
+	stations_list := []string{"DRG2", "DSN1", "DBS3", "DBS2", "DEX2", "DCF1", "DSA1", "DPO1", "DOX2"}
 
 	var station string
 
@@ -136,6 +136,8 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 		dnrFan, dnrGreat, dnrFair = 1200, 1400, 1850
 	case "DPO1":
 		dnrFan, dnrGreat, dnrFair = 1500, 1800, 2299
+	case "DOX2":
+		dnrFan, dnrGreat, dnrFair = 1500, 1800, 2300
 
 	default:
 		return nil, errors.New("station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1")
