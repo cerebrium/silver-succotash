@@ -246,6 +246,19 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	// We expect the last array to be absolute bogus
 	driver_data_matrix = driver_data_matrix[:9]
 
+	size_of_submatrix := len(driver_data_matrix[0])
+
+	for i := 0; i < len(driver_data_matrix); i++ {
+		if len(driver_data_matrix[i]) != size_of_submatrix {
+			if i == 6 {
+				driver_data_matrix[i] = append(driver_data_matrix[i], "1")
+				continue
+			}
+
+			driver_data_matrix[i] = append(driver_data_matrix[i], "96")
+		}
+	}
+
 	// We need to group the data by driver
 	for i := 0; i < len(driver_data_matrix[0]); i++ {
 		for x := 0; x < len(driver_data_matrix); x++ {
