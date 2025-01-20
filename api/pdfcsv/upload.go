@@ -147,6 +147,8 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 
 	fantastic, great, fair, poor := 22.0, 20.5, 18.0, 13.0
 
+	// fmt.Println("\n\n What is the final data set: ", final_data_set, "\n\n ----")
+
 	for i := 0; i < len(final_data_set); i++ {
 		line := final_data_set[i]
 

@@ -15,8 +15,8 @@ import (
 func convert_pdf_to_text(filename string) ([][]string, error) {
 	// Get the current working directory
 
-	// Please don't take all my pdf's... Its really not 
-	// a big thing, but still. 
+	// Please don't take all my pdf's... Its really not
+	// a big thing, but still.
 	config.Default = config.NewDefault("token_QksTJT7R")
 
 	filePath := filepath.Join("./uploads", filename)
@@ -114,8 +114,19 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	var number_of_drivers int
 	driver_numbers := []int{}
 
+	// To handle the out of order entries, we need to pre-process
+	// the data a bit more. When we run into an instance where the
+	// entry looks like [0|1|2     n%] then we will process the next
+	// lines by placing the 0th value into an arr, and the 1st value
+	// into an arr. Then after this section, the rest into a third
+	// arr. Then we will concatenate the values at the end of the
+	// current string.
+	ce := []string{}
+	dex := []string{}
+
 	// There is a 'page n' in here, but if we append it to the last
-	// list, then we can ignore it
+	// list, then we can ignore it.... We have an issue, there are
+	// cases where there are more than one value per line.
 	for m_idx := 0; m_idx < len(result)-1; m_idx++ {
 		final_strings = append(final_strings, "")
 
@@ -161,9 +172,33 @@ func parse_text_file_created(filename string) ([][]string, error) {
 				break
 			}
 
-			final_strings[m_idx] += result[m_idx][i]
 			if strings.TrimSpace(result[m_idx][i]) == "" {
 				break
+			}
+
+			// Handle more than one value per line
+			mult_vals := strings.Split(result[m_idx][i], " ")
+
+			curr_list := []string{}
+			for n := 0; n < len(mult_vals); n++ {
+				if strings.TrimSpace(mult_vals[n]) == "" {
+					continue
+				}
+
+				curr_list = append(curr_list, mult_vals[n])
+
+			}
+
+			if len(curr_list) == 2 {
+				// check for the out of orders
+				if curr_list[0] == "0" || curr_list[0] == "1" || curr_list[0] == "2" {
+					ce = append(ce, curr_list[0])
+					dex = append(dex, curr_list[1])
+				}
+			}
+
+			for n := 0; n < len(curr_list); n++ {
+				final_strings[m_idx] += " " + curr_list[n]
 			}
 
 		}
@@ -198,6 +233,10 @@ func parse_text_file_created(filename string) ([][]string, error) {
 		}
 
 	}
+
+	// This solves the out of order issue
+	driver_data_matrix[6] = ce
+	driver_data_matrix[7] = dex
 
 	current_dataset := []string{}
 
