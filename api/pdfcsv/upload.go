@@ -59,17 +59,12 @@ func handler(c echo.Context) ([]string, error) {
 		return nil, err
 	}
 
-	fmt.Println("\n\n\n making it to here")
 	// We need to get the pdf into a format that the below method can
 	// actually work with (text)
 	final_data_set, err := convert_pdf_to_text(fileHeader.Filename)
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("\n\n i am after the final_data_set")
-
-	fmt.Println("\n\n final data set: ", final_data_set, "\n\n")
 
 	csv_to_write, err := process_data(final_data_set, fileData.Name)
 	if err != nil {

@@ -7,9 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	convertapi "github.com/ConvertAPI/convertapi-go/pkg"
 	"github.com/ConvertAPI/convertapi-go/pkg/config"
-	"github.com/ConvertAPI/convertapi-go/pkg/param"
 )
 
 func convert_pdf_to_text(filename string) ([][]string, error) {
@@ -25,15 +23,15 @@ func convert_pdf_to_text(filename string) ([][]string, error) {
 
 	// Please don't take all my pdf's... Its really not
 	// a big thing, but still.
-	config.Default = config.NewDefault("token_QksTJT7R")
+	// config.Default = config.NewDefault("token_QksTJT7R")
+	//
+	// _, err_arr := convertapi.ConvDef("pdf", "txt",
+	// 	param.NewPath("File", filePath, nil),
+	// ).ToPath(txt_file_destination)
 
-	_, err_arr := convertapi.ConvDef("pdf", "txt",
-		param.NewPath("File", filePath, nil),
-	).ToPath(txt_file_destination)
-
-	if err_arr != nil {
-		return nil, err_arr[0]
-	}
+	// if err_arr != nil {
+	// 	return nil, err_arr[0]
+	// }
 
 	final_data_matrix, err := parse_text_file_created(txt_file_destination)
 	if err != nil {
@@ -191,7 +189,7 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 			if len(curr_list) == 2 {
 				// check for the out of orders
-				if curr_list[0] == "0" || curr_list[0] == "1" || curr_list[0] == "2" {
+				if curr_list[0] == "0" || curr_list[0] == "1" || curr_list[0] == "2" || curr_list[0] == "3" || curr_list[0] == "4" {
 					ce = append(ce, curr_list[0])
 					dex = append(dex, curr_list[1])
 				}
