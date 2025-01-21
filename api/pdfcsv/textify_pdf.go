@@ -7,7 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	convertapi "github.com/ConvertAPI/convertapi-go/pkg"
 	"github.com/ConvertAPI/convertapi-go/pkg/config"
+	"github.com/ConvertAPI/convertapi-go/pkg/param"
 )
 
 func convert_pdf_to_text(filename string) ([][]string, error) {
@@ -23,15 +25,15 @@ func convert_pdf_to_text(filename string) ([][]string, error) {
 
 	// Please don't take all my pdf's... Its really not
 	// a big thing, but still.
-	// config.Default = config.NewDefault("token_QksTJT7R")
-	//
-	// _, err_arr := convertapi.ConvDef("pdf", "txt",
-	// 	param.NewPath("File", filePath, nil),
-	// ).ToPath(txt_file_destination)
+	config.Default = config.NewDefault("token_QksTJT7R")
 
-	// if err_arr != nil {
-	// 	return nil, err_arr[0]
-	// }
+	_, err_arr := convertapi.ConvDef("pdf", "txt",
+		param.NewPath("File", filePath, nil),
+	).ToPath(txt_file_destination)
+
+	if err_arr != nil {
+		return nil, err_arr[0]
+	}
 
 	final_data_matrix, err := parse_text_file_created(txt_file_destination)
 	if err != nil {
