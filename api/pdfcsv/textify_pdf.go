@@ -67,8 +67,9 @@ func parse_text_file_created(filename string) ([][]string, error) {
 			foundTransporterId = true
 		}
 
-		if foundTransporterId && strings.Contains(line, "Focus Area") {
+		if foundTransporterId && strings.Contains(line, "DEX") {
 			isCapturing = true
+			continue
 		}
 
 		// If we are capturing, add the line to result
@@ -83,11 +84,12 @@ func parse_text_file_created(filename string) ([][]string, error) {
 			// results slice.
 			result = append(result, []string{})
 			current_page_idx++
+
 			continue
 		}
 
 		// Stop capturing if 'Drivers With Working Hour Exceptions' is found
-		if isCapturing && strings.Contains(line, "Drivers With Working Hour Exceptions") {
+		if (isCapturing && strings.Contains(line, "Drivers With Working Hour Exceptions")) || (isCapturing && strings.Contains(line, "Blank Sheet means no exceptions")) {
 			break
 		}
 	}
@@ -127,11 +129,13 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	// There is a 'page n' in here, but if we append it to the last
 	// list, then we can ignore it.... We have an issue, there are
 	// cases where there are more than one value per line.
-	for m_idx := 0; m_idx < len(result)-1; m_idx++ {
+
+	for m_idx := range len(result) - 1 {
 		final_strings = append(final_strings, "")
 
 		// The second list starts with an empty space
-		for i := 0; i < len(result[m_idx]); i++ {
+		for i := range result[m_idx] {
+			// Handle more than 2 pages
 			if m_idx > 0 && m_idx > len(driver_numbers)-1 {
 				// We should be able to walk down the array here
 				// to find the next list of driver id's and create
@@ -156,23 +160,45 @@ func parse_text_file_created(filename string) ([][]string, error) {
 					continue
 				}
 			}
+
+			if m_idx == 0 && len(driver_numbers) < 1 {
+				if strings.TrimSpace(result[m_idx][i]) != "" {
+
+					number_of_drivers = len(strings.Fields(result[m_idx][i]))
+
+					if number_of_drivers > 5 {
+						driver_numbers = append(driver_numbers, number_of_drivers)
+					}
+				}
+			}
+
+			// Add to the length of the drivers
 			if !first_break {
 				if strings.TrimSpace(result[m_idx][i]) == "" {
 					first_break = true
 					// This should get the length of each slice in the matrix
-					number_of_drivers = len(strings.Fields(result[m_idx][i+1]))
+					number_of_drivers = len(strings.Fields(result[m_idx][i]))
+					if number_of_drivers < 1 {
+						continue
+					}
 					driver_numbers = append(driver_numbers, number_of_drivers)
 				}
 				continue
 			}
 
 			// The pages past the first never create a driver number
-
 			if strings.Contains(result[m_idx][i], "Page") {
 				break
 			}
 
+			// This is breaking everything
 			if strings.TrimSpace(result[m_idx][i]) == "" {
+				if m_idx == 0 {
+					if i < 10 {
+						continue
+					}
+				}
+
 				break
 			}
 
@@ -180,7 +206,7 @@ func parse_text_file_created(filename string) ([][]string, error) {
 			mult_vals := strings.Split(result[m_idx][i], " ")
 
 			curr_list := []string{}
-			for n := 0; n < len(mult_vals); n++ {
+			for n := range mult_vals {
 				if strings.TrimSpace(mult_vals[n]) == "" {
 					continue
 				}
@@ -197,7 +223,7 @@ func parse_text_file_created(filename string) ([][]string, error) {
 				}
 			}
 
-			for n := 0; n < len(curr_list); n++ {
+			for n := range curr_list {
 				final_strings[m_idx] += " " + curr_list[n]
 			}
 
@@ -208,12 +234,12 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 	// We need to pop the last element off,
 	// so using a slice, not an array.
-	for i := 0; i < 10; i++ {
+	for range 9 {
 		driver_data_matrix = append(driver_data_matrix, []string{})
 	}
 
 	// split the strings, and write to the matrix
-	for str_idx := 0; str_idx < len(final_strings); str_idx++ {
+	for str_idx := range final_strings {
 		final_string := final_strings[str_idx]
 		// These are the actual table values we want
 		split_values := strings.Fields(final_string)
@@ -224,7 +250,7 @@ func parse_text_file_created(filename string) ([][]string, error) {
 		}
 
 		m_idx := 0
-		for i := 0; i < len(split_values); i++ {
+		for i := range split_values {
 			if i%driver_numbers[str_idx] == 0 && i != 0 {
 				m_idx++
 			}
@@ -244,11 +270,10 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	var final_data_matrix [][]string
 
 	// We expect the last array to be absolute bogus
-	driver_data_matrix = driver_data_matrix[:9]
+	driver_data_matrix = driver_data_matrix[:8]
 
 	size_of_submatrix := len(driver_data_matrix[0])
-
-	for i := 0; i < len(driver_data_matrix); i++ {
+	for i := range driver_data_matrix {
 		if len(driver_data_matrix[i]) != size_of_submatrix {
 			if i == 6 {
 				driver_data_matrix[i] = append(driver_data_matrix[i], "1")
@@ -260,8 +285,9 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	}
 
 	// We need to group the data by driver
-	for i := 0; i < len(driver_data_matrix[0]); i++ {
-		for x := 0; x < len(driver_data_matrix); x++ {
+	for i := range driver_data_matrix[0] {
+		for x := range driver_data_matrix {
+			// fmt.Println("\n---x:  ", x, "\n----- i: ", i)
 			current_dataset = append(current_dataset, driver_data_matrix[x][i])
 		}
 
