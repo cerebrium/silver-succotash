@@ -74,10 +74,6 @@ func handler(c echo.Context) ([]string, error) {
 	return csv_to_write, nil
 }
 
-// THIS IS THE TS CONVERT... REVISIT THIS AND MAKE SURE
-// IT IS CORRECT, AND/OR REWRITE IT YOUSELF INSTEAD OF
-// HAVING GIPPITY CONVERT IT FROM TS TO GO.
-
 type (
 	WrongObjCount map[string]int
 	WrongObj      map[string]WrongObjCount
@@ -94,6 +90,7 @@ var percentMap = PercentMap{
 }
 
 func process_data(final_data_set [][]string, file_name string) ([]string, error) {
+	fmt.Println("what is the final data set: ", final_data_set)
 	trimmed_file_name := strings.TrimSpace(file_name)
 
 	stations_list := []string{"DRG2", "DSN1", "DBS3", "DBS2", "DEX2", "DCF1", "DSA1", "DPO1", "DOX2"}
@@ -115,29 +112,29 @@ func process_data(final_data_set [][]string, file_name string) ([]string, error)
 }
 
 func calculateStatuses(station string, final_data_set [][]string) ([]string, error) {
-	final_csv := []string{"Transporter ID, Status, Delivered, DCR, DNR DPMO, POD, CC, CE, DEX, FOCUS AREA\n"}
+	final_csv := []string{"Transporter ID, Status, Delivered, DCR, DNR DPMO, POD, CC, CE, DEX\n"}
 
 	dnrFan, dnrGreat, dnrFair := 1100, 1100, 1100
 
 	switch station {
 	case "DRG2":
-		dnrFan, dnrGreat, dnrFair = 1100, 1300, 1650
+		dnrFan, dnrGreat, dnrFair = 1000, 1250, 1550
 	case "DSN1":
-		dnrFan, dnrGreat, dnrFair = 1100, 1300, 1700
+		dnrFan, dnrGreat, dnrFair = 900, 1100, 1400
 	case "DBS3":
-		dnrFan, dnrGreat, dnrFair = 1300, 1550, 2000
+		dnrFan, dnrGreat, dnrFair = 1150, 1450, 1800
 	case "DBS2":
-		dnrFan, dnrGreat, dnrFair = 1400, 1650, 2100
+		dnrFan, dnrGreat, dnrFair = 1550, 1950, 2450
 	case "DEX2":
-		dnrFan, dnrGreat, dnrFair = 1050, 1250, 1600
+		dnrFan, dnrGreat, dnrFair = 1050, 1300, 1600
 	case "DCF1":
-		dnrFan, dnrGreat, dnrFair = 1200, 1400, 1800
+		dnrFan, dnrGreat, dnrFair = 1250, 1550, 1950
 	case "DSA1":
-		dnrFan, dnrGreat, dnrFair = 1200, 1400, 1850
+		dnrFan, dnrGreat, dnrFair = 1100, 1350, 1700
 	case "DPO1":
-		dnrFan, dnrGreat, dnrFair = 1500, 1800, 2299
+		dnrFan, dnrGreat, dnrFair = 1200, 1500, 1900
 	case "DOX2":
-		dnrFan, dnrGreat, dnrFair = 1500, 1800, 2300
+		dnrFan, dnrGreat, dnrFair = 1100, 1400, 1750
 
 	default:
 		return nil, errors.New("station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1")
@@ -293,7 +290,7 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 
 		// Determine status
 		status := determineStatus(currentRating)
-		content := fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", line[0], status, line[1], dcr, dnrDpmo, pod, cc, ce, dex, line[len(line)-1])
+		content := fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", line[0], status, line[1], dcr, dnrDpmo, pod, cc, ce, dex)
 		final_csv = append(final_csv, content)
 	}
 
