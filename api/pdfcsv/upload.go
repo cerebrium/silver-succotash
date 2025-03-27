@@ -81,16 +81,15 @@ type (
 )
 
 var percentMap = PercentMap{
-	"dcr_val":      0.25,
-	"dnr_dpmo_val": 0.25,
-	"ce_val":       0.2,
-	"pod_val":      0.1,
-	"cc_val":       0.1,
-	"dex_val":      0.1,
+	"dcr_val":      0.35,
+	"dnr_dpmo_val": 0.35,
+	"ce_val":       0.075,
+	"pod_val":      0.075,
+	"cc_val":       0.075,
+	"dex_val":      0.075,
 }
 
 func process_data(final_data_set [][]string, file_name string) ([]string, error) {
-	fmt.Println("what is the final data set: ", final_data_set)
 	trimmed_file_name := strings.TrimSpace(file_name)
 
 	stations_list := []string{"DRG2", "DSN1", "DBS3", "DBS2", "DEX2", "DCF1", "DSA1", "DPO1", "DOX2"}
@@ -267,25 +266,26 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 				missingPercent += percentMap[option]
 			}
 		}
+		fmt.Println("what is the missing percent: ", missingPercent)
 		multiplicative := 1 / (1 - missingPercent)
 
 		if !contains(dontInclude, "dcr_val") {
-			currentRating += dcrVal * (0.25 * multiplicative)
+			currentRating += dcrVal * (0.35 * multiplicative)
 		}
 		if !contains(dontInclude, "dnr_dpmo_val") {
-			currentRating += dnrDpmoVal * (0.25 * multiplicative)
+			currentRating += dnrDpmoVal * (0.35 * multiplicative)
 		}
 		if !contains(dontInclude, "ce_val") {
-			currentRating += ceVal * (0.2 * multiplicative)
+			currentRating += ceVal * (0.075 * multiplicative)
 		}
 		if !contains(dontInclude, "pod_val") {
-			currentRating += podVal * (0.1 * multiplicative)
+			currentRating += podVal * (0.075 * multiplicative)
 		}
 		if !contains(dontInclude, "cc_val") {
-			currentRating += ccVal * (0.1 * multiplicative)
+			currentRating += ccVal * (0.075 * multiplicative)
 		}
 		if !contains(dontInclude, "dex_val") {
-			currentRating += dexVal * (0.1 * multiplicative)
+			currentRating += dexVal * (0.075 * multiplicative)
 		}
 
 		// Determine status
