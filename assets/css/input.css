@@ -1,6 +1,5 @@
 @import "flowbite/src/themes/default";
 @import "tailwindcss";
-@plugin "flowbite/plugin";
 
 #theme-toggle {
   margin-top: 3px;
@@ -22,4 +21,9 @@
 
 #form_container {
   z-index: 3;
+}
+
+button {
+  border: none !important;
+  background: none !important;
 }

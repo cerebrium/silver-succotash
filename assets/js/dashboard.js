@@ -13,12 +13,26 @@ class UploadFile {
   /** @type boolean */
   is_dragging = false;
 
+  /** @type HTMLButtonElement | null */
+  weights_button = null;
+
+  /** @type HTMLButtonElement | null */
+  dnr_dpmo_button = null;
+
   constructor() {
     this.pdf_drag_zone = document.getElementById("pdf_drag_zone");
     this.pdf_input = document.getElementById("dropzone-file");
     this.upload_list_body = document.getElementById("upload_list_body");
+    this.weights_button = document.getElementById("weights_button");
+    this.dnr_dpmo_button = document.getElementById("dnr_dpmo_button");
 
-    if (!this.pdf_drag_zone || !this.pdf_input || !this.upload_list_body) {
+    if (
+      !this.pdf_drag_zone ||
+      !this.pdf_input ||
+      !this.upload_list_body ||
+      !this.weights_button ||
+      !this.dnr_dpmo_button
+    ) {
       throw new Error("There is no drag zone");
     }
 
@@ -27,6 +41,22 @@ class UploadFile {
       "dragover",
       this.handle_drag_over.bind(this),
     );
+    this.dnr_dpmo_button.addEventListener(
+      "click",
+      this.toggle_dnr_dmpl.bind(this),
+    );
+    this.weights_button.addEventListener(
+      "click",
+      this.toggle_weights_botton.bind(this),
+    );
+  }
+
+  toggle_dnr_dmpl(e) {
+    console.log("the toggle dnr was clicked");
+  }
+
+  toggle_weights_botton(e) {
+    console.log("the toggle dnr was clicked");
   }
 
   handle_drop(e) {
