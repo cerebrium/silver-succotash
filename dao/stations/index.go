@@ -1,9 +1,9 @@
 package stations
 
 type Station struct {
-	ID      int
-	station string
-	fan     int
-	great   int
-	fair    int
+	ID      int    `json:"id"`
+	Station string `json:"station"`
+	Fan     int    `json:"fan"`
+	Great   int    `json:"great"`
+	Fair    int    `json:"fair"`
 }

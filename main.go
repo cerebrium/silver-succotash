@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"hopdf.com/api/pdfcsv"
+	"hopdf.com/api/weights_routes"
 	"hopdf.com/db"
 	"hopdf.com/localware"
 
@@ -91,6 +92,10 @@ func main() {
 
 	authApp.POST("/api/pdf_upload", func(c echo.Context) error {
 		return pdfcsv.UploadHandler(c)
+	})
+
+	authApp.GET("/api/stations", func(c echo.Context) error {
+		return weights_routes.ReadWeights(c)
 	})
 
 	authApp.GET("/metrics", echoprometheus.NewHandler()) // adds route to serve gathered metrics
