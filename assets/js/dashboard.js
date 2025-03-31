@@ -107,6 +107,12 @@ class UploadFile {
     ) {
       this.is_authed = true;
     } else {
+      const dropdown_button = document.getElementById("dropdownDefaultButton");
+
+      if (!dropdown_button) {
+        throw new Error("this is busted, no dropdown");
+      }
+      dropdown_button.style.display = "none";
       this.weights_button.style.display = "none";
       this.is_authed = false;
     }

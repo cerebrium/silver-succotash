@@ -223,6 +223,9 @@ func Make404Html() string {
             <meta charset="UTF-8" />
 
 			      <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_Zmx5aW5nLWNvcmFsLTgyLmNsZXJrLmFjY291bnRzLmRldiQ" src="https://flying-coral-82.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
+            <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet"/>
+			      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
+
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <!-- Clerk Publishable key and Frontend API URL -->
             <link href="/assets/css/output.css" rel="stylesheet" />
