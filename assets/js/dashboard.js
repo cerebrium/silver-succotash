@@ -13,12 +13,47 @@ class UploadFile {
   /** @type boolean */
   is_dragging = false;
 
+  /** @type HTMLButtonElement | null */
+  weights_button = null;
+
+  /** @type HTMLButtonElement | null */
+  dnr_dpmo_button = null;
+
   constructor() {
     this.pdf_drag_zone = document.getElementById("pdf_drag_zone");
     this.pdf_input = document.getElementById("dropzone-file");
     this.upload_list_body = document.getElementById("upload_list_body");
+    this.weights_button = document.getElementById("weights_button");
 
-    if (!this.pdf_drag_zone || !this.pdf_input || !this.upload_list_body) {
+    this.form_container = document.getElementById("form_container");
+
+    this.dnr_dpmo_button = document.getElementById("station_dropdown");
+    this.station_dropdown = document.getElementById("dropdown");
+
+    this.stations_form = document.getElementById("station_form");
+    this.stations_form.addEventListener(
+      "submit",
+      this.submit_station.bind(this),
+    );
+
+    this.weights_form = document.getElementById("weights_form");
+    this.weights_form.addEventListener(
+      "submit",
+      this.submit_weights.bind(this),
+    );
+
+    this.current_station = null;
+
+    this.is_displaying_station_form = false;
+    this.is_displaying_weights_form = false;
+
+    if (
+      !this.pdf_drag_zone ||
+      !this.pdf_input ||
+      !this.upload_list_body ||
+      !this.weights_button ||
+      !this.dnr_dpmo_button
+    ) {
       throw new Error("There is no drag zone");
     }
 
@@ -27,6 +62,248 @@ class UploadFile {
       "dragover",
       this.handle_drag_over.bind(this),
     );
+    this.dnr_dpmo_button.addEventListener(
+      "click",
+      this.toggle_dnr_dmpl.bind(this),
+    );
+    this.weights_button.addEventListener(
+      "click",
+      this.toggle_weights_botton.bind(this),
+    );
+
+    this.getUserEmail();
+  }
+
+  // Example usage (replace with your actual JWT):
+  async getUserEmail() {
+    const user_display = document.querySelector(".cl-userButtonTrigger");
+
+    if (!user_display) {
+      return setTimeout(() => {
+        this.getUserEmail();
+      }, 10);
+    }
+
+    user_display.click();
+
+    this.findEmail();
+  }
+
+  async findEmail() {
+    const email_box = document.querySelector(
+      ".cl-userPreviewSecondaryIdentifier",
+    );
+
+    if (!email_box) {
+      return setTimeout(() => {
+        this.findEmail();
+      }, 10);
+    }
+
+    if (
+      (email_box.textContent &&
+        email_box.textContent === "nicholas.m.shankland@gmail.com") ||
+      email_box.textContent === "r.marconi@h2ologistics.co.uk"
+    ) {
+      this.is_authed = true;
+    } else {
+      this.weights_button.style.display = "none";
+      this.is_authed = false;
+    }
+
+    const user_display = document.querySelector(".cl-userButtonTrigger");
+
+    user_display.click();
+  }
+
+  async submit_weights(e) {
+    e.preventDefault();
+    const target = e.target;
+
+    if (!target) {
+      throw new Error("there is no form target");
+    }
+
+    const inputs = target.querySelectorAll("input");
+
+    const weights = {};
+
+    for (const el of inputs) {
+      weights[el.name] = parseInt(el.value);
+    }
+
+    let current_sum = 0;
+
+    for (const val of Object.values(weights)) {
+      current_sum += val;
+    }
+
+    if (100 - current_sum > 3 || 100 - current_sum < -3) {
+      Toastify({
+        text: "Values are not close enough to 100 summed",
+        duration: 3000,
+        destination: "https://github.com/apvarun/toastify-js",
+        newWindow: true,
+        close: true,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+          background: "linear-gradient(to right, #FA8072, #CD5C5C)",
+        },
+        onClick: function () {}, // Callback after click
+      }).showToast();
+
+      // TODO: make a toast
+    } else {
+      await this.update_weights(weights);
+
+      this.toggle_weights_botton();
+    }
+  }
+
+  async update_weights(weights) {
+    const endpoint = "/weights";
+    let current_domain = window.location.href;
+
+    current_domain = current_domain.replace("dashboard", "api");
+
+    for (const [key, value] of Object.entries(weights)) {
+      const new_val = parseInt(value) / 100;
+      weights[key] = parseFloat(new_val.toFixed(3));
+    }
+
+    weights.ID = 1;
+
+    const json_station = JSON.stringify(weights);
+
+    return fetch(current_domain + endpoint, {
+      method: "POST",
+      body: json_station,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  async toggle_weights_botton(e) {
+    this.is_displaying_weights_form = !this.is_displaying_weights_form;
+
+    if (this.is_displaying_weights_form) {
+      const weights = await this.get_weights();
+      const j_weights = await weights.json();
+
+      const form_inputs = this.weights_form.querySelectorAll("input");
+
+      for (const el of form_inputs) {
+        if (j_weights[el.id]) {
+          el.value = parseFloat(j_weights[el.id] * 100).toFixed(1);
+        }
+      }
+
+      this.form_container.style.display = "flex";
+      this.weights_form.style.display = "block";
+      return;
+    }
+
+    this.weights_form.style.display = "none";
+    this.form_container.style.display = "none";
+  }
+
+  async get_weights() {
+    const endpoint = "/weights";
+    let current_domain = window.location.href;
+
+    current_domain = current_domain.replace("dashboard", "api");
+
+    return fetch(current_domain + endpoint, {
+      method: "GET",
+    });
+  }
+
+  /**
+   *
+   * Make the station form visible
+   *
+   */
+  async toggle_dnr_dmpl(e) {
+    this.is_displaying_station_form = !this.is_displaying_station_form;
+
+    if (this.is_displaying_station_form) {
+      // Just let the error break things, f - try/catch
+      if (!e.target.id) {
+        throw new Error("there is no id!");
+      }
+
+      const station_data = await this.get_station_data();
+      const j_station_data = await station_data.json();
+
+      let station_to_display = j_station_data.filter(
+        (el) => el.station === e.target.id,
+      );
+
+      if (station_to_display.length < 1) {
+        throw new Error("there is no station to display");
+      }
+
+      // Make the form show the current values
+      station_to_display = station_to_display[0];
+      const inputs = this.stations_form.querySelectorAll("input");
+      for (const el of inputs) {
+        if (station_to_display[el.id]) {
+          el.value = station_to_display[el.id];
+        }
+      }
+
+      this.current_station = station_to_display;
+
+      this.form_container.style.display = "flex";
+      this.stations_form.style.display = "block";
+      this.station_dropdown.classList.add("hidden");
+
+      return;
+    }
+
+    this.stations_form.style.display = "none";
+    this.form_container.style.display = "none";
+  }
+
+  async submit_station(e) {
+    e.preventDefault();
+    const target = e.target;
+
+    if (!target) {
+      throw new Error("there is no form target");
+    }
+
+    const inputs = target.querySelectorAll("input");
+
+    for (const el of inputs) {
+      this.current_station[el.name] = parseInt(el.value);
+    }
+
+    await this.update_station();
+
+    this.current_station = null;
+
+    this.toggle_dnr_dmpl();
+  }
+
+  async update_station() {
+    const endpoint = "/station";
+    let current_domain = window.location.href;
+
+    current_domain = current_domain.replace("dashboard", "api");
+
+    const json_station = JSON.stringify(this.current_station);
+
+    return fetch(current_domain + endpoint, {
+      method: "POST",
+      body: json_station,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 
   handle_drop(e) {
@@ -150,6 +427,17 @@ class UploadFile {
     return [status, download];
   }
 
+  async get_station_data() {
+    const endpoint = "/station";
+    let current_domain = window.location.href;
+
+    current_domain = current_domain.replace("dashboard", "api");
+
+    return fetch(current_domain + endpoint, {
+      method: "GET",
+    });
+  }
+
   /**
    * Processes a PDF file upload and performs specific actions (e.g., validation, rendering, or uploading).
    *
@@ -168,7 +456,6 @@ class UploadFile {
     const form_data = new FormData();
     form_data.append("file", file);
 
-    console.log("form_data: ", form_data);
     return fetch(current_domain + endpoint, {
       method: "POST",
       body: form_data,

@@ -17,6 +17,6 @@ func LocalConnect() *sql.DB {
 		os.Exit(1)
 	}
 
-	// WriteLocalDb(db)
+	WriteLocalDb(db)
 	return db
 }

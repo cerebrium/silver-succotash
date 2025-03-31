@@ -1,6 +1,7 @@
 package dashboard
 
 import "hopdf.com/views/dashboard/components"
+import "hopdf.com/views/dashboard/components/forms"
 
 templ Dashboard() {
 	<!DOCTYPE html>
@@ -14,6 +15,9 @@ templ Dashboard() {
 			<script src="/assets/js/htmx.min.js"></script>
 			<link href="/assets/css/output.css" rel="stylesheet"/>
 			<link rel="icon" href="/assets/images/h2o_logistics_logo.png" type="image/png"/>
+			<link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet"/>
+			<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
+			<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 			<script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_Zmx5aW5nLWNvcmFsLTgyLmNsZXJrLmFjY291bnRzLmRldiQ" src="https://flying-coral-82.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
 			<!-- This is the flowbite darkmode script -->
 			<script>
@@ -29,11 +33,112 @@ templ Dashboard() {
 			<div id="clerk-captcha"></div>
 			<nav class="bg-white border-gray-200 dark:bg-gray-900 ">
 				<div class=" flex flex-wrap items-center justify-between mx-auto p-2">
-					<div class="flex flex-row">
+					<div class="flex flex-row items-center">
 						<a href="https://prate.pro/v1/dashboard" class="flex items-center space-x-3 rtl:space-x-reverse p-3 mr-20">
 							<img src="/assets/images/h2o_logistics_logo.png" class="h-14" alt="Flowbite Logo"/>
 							<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">H20 Logistics</span>
 						</a>
+						<div class="flex items-center">
+							<button
+								type="button"
+								id="weights_button"
+								class="py-2.5 px-5 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer"
+							>Weights</button>
+							<!-- Station dropdown -->
+							<button
+								id="dropdownDefaultButton"
+								data-dropdown-toggle="dropdown"
+								class="py-2.5 px-5 me-2 mb-0 text-sm
+            font-medium text-gray-900 focus:outline-none rounded-lg border border-gray-200 hover:bg-gray-100
+            hover:text-blue-700 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
+            dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer text-center inline-flex items-center "
+								type="button"
+							>
+								stations
+								<svg
+									class="w-2.5 h-2.5 ms-3"
+									aria-hidden="true"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 10 6"
+								>
+									<path
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="m1 1 4 4 4-4"
+									></path>
+								</svg>
+							</button>
+							<!-- Dropdown menu -->
+							<div
+								id="dropdown"
+								class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700"
+							>
+								<ul
+									class="py-2 text-sm text-gray-700 bg-gray-100 rounded-lg"
+									aria-labelledby="dropdownDefaultButton"
+									id="station_dropdown"
+								>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DRG2"
+										>DRG2</a>
+									</li>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DSN1"
+										>DSN1</a>
+									</li>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DBS3"
+										>DBS3</a>
+									</li>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DBS2"
+										>DBS2</a>
+									</li>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DEX2"
+										>DEX2</a>
+									</li>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DCF1"
+										>DCF1</a>
+									</li>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DSA1"
+										>DSA1</a>
+									</li>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DPO1"
+										>DPO1</a>
+									</li>
+									<li>
+										<a
+											class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											id="DOX2"
+										>DOX2</a>
+									</li>
+								</ul>
+							</div>
+							<!-- End Station dropdown -->
+						</div>
 						<div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
 							<ul
 								class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
@@ -89,15 +194,19 @@ templ Dashboard() {
 					</div>
 				</div>
 			</nav>
-			<main class="p-4 flex justify-center" id="main_container">
+			<main class="p-4 flex justify-center dark:bg-gray-100" id="main_container">
 				<section class="w-9/12">
 					@components.PdfUpload()
+					<div id="form_container" class="bg-black/50 dark:bg-black/70"></div>
+					@forms.StationForm()
+					@forms.WeightsForm()
 					@components.UploadedList()
 				</section>
 				@components.Footer()
 			</main>
 			<script src="/assets/js/index.js"></script>
 			<script src="/assets/js/dashboard.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 		</body>
 	</html>
 }

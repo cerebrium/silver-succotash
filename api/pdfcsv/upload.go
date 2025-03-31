@@ -1,7 +1,6 @@
 package pdfcsv
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -10,7 +9,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"hopdf.com/dao/pdfcsv"
+	"hopdf.com/dao/stations"
+	"hopdf.com/dao/weights"
 	"hopdf.com/helpers"
+	"hopdf.com/localware"
 )
 
 // This handler expects the body of th incoming request
@@ -31,6 +33,10 @@ func UploadHandler(c echo.Context) error {
 }
 
 func handler(c echo.Context) ([]string, error) {
+	cc, ok := c.(*localware.LocalUserClerkDbContext)
+	if !ok {
+		c.Logger().Error("could not resolve cc")
+	}
 	// Retrieve the file from the form
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
@@ -66,7 +72,26 @@ func handler(c echo.Context) ([]string, error) {
 		return nil, err
 	}
 
-	csv_to_write, err := process_data(final_data_set, fileData.Name)
+	local_weights := weights.Weights{ID: 1}
+	updated_weights, err := local_weights.Read(cc.Db)
+	if err != nil {
+		return nil, err
+	}
+
+	stations, err := stations.ReadAll(cc.Db)
+	if err != nil {
+		return nil, err
+	}
+
+	percentMap := PercentMap{}
+	percentMap["dcr_val"] = updated_weights.Dcr
+	percentMap["dnr_dpmo_val"] = updated_weights.DnrDpmo
+	percentMap["ce_val"] = updated_weights.Ce
+	percentMap["pod_val"] = updated_weights.Pod
+	percentMap["cc_val"] = updated_weights.Cc
+	percentMap["dex_val"] = updated_weights.Dex
+
+	csv_to_write, err := process_data(final_data_set, fileData.Name, percentMap, stations)
 	if err != nil {
 		return nil, err
 	}
@@ -80,16 +105,7 @@ type (
 	PercentMap    map[string]float64
 )
 
-var percentMap = PercentMap{
-	"dcr_val":      0.35,
-	"dnr_dpmo_val": 0.35,
-	"ce_val":       0.075,
-	"pod_val":      0.075,
-	"cc_val":       0.075,
-	"dex_val":      0.075,
-}
-
-func process_data(final_data_set [][]string, file_name string) ([]string, error) {
+func process_data(final_data_set [][]string, file_name string, PercentMap PercentMap, stations []stations.Station) ([]string, error) {
 	trimmed_file_name := strings.TrimSpace(file_name)
 
 	stations_list := []string{"DRG2", "DSN1", "DBS3", "DBS2", "DEX2", "DCF1", "DSA1", "DPO1", "DOX2"}
@@ -102,7 +118,7 @@ func process_data(final_data_set [][]string, file_name string) ([]string, error)
 		}
 	}
 
-	csv_to_write, err := calculateStatuses(station, final_data_set)
+	csv_to_write, err := calculateStatuses(station, final_data_set, PercentMap, stations)
 	if err != nil {
 		return nil, err
 	}
@@ -110,40 +126,23 @@ func process_data(final_data_set [][]string, file_name string) ([]string, error)
 	return csv_to_write, nil
 }
 
-func calculateStatuses(station string, final_data_set [][]string) ([]string, error) {
+func calculateStatuses(station string, final_data_set [][]string, percentMap PercentMap, stations []stations.Station) ([]string, error) {
 	final_csv := []string{"Transporter ID, Status, Delivered, DCR, DNR DPMO, POD, CC, CE, DEX\n"}
 
 	dnrFan, dnrGreat, dnrFair := 1100, 1100, 1100
 
-	switch station {
-	case "DRG2":
-		dnrFan, dnrGreat, dnrFair = 1000, 1250, 1550
-	case "DSN1":
-		dnrFan, dnrGreat, dnrFair = 900, 1100, 1400
-	case "DBS3":
-		dnrFan, dnrGreat, dnrFair = 1150, 1450, 1800
-	case "DBS2":
-		dnrFan, dnrGreat, dnrFair = 1550, 1950, 2450
-	case "DEX2":
-		dnrFan, dnrGreat, dnrFair = 1050, 1300, 1600
-	case "DCF1":
-		dnrFan, dnrGreat, dnrFair = 1250, 1550, 1950
-	case "DSA1":
-		dnrFan, dnrGreat, dnrFair = 1100, 1350, 1700
-	case "DPO1":
-		dnrFan, dnrGreat, dnrFair = 1200, 1500, 1900
-	case "DOX2":
-		dnrFan, dnrGreat, dnrFair = 1100, 1400, 1750
-
-	default:
-		return nil, errors.New("station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1")
+	// Find the station, and set the vals
+	for _, val := range stations {
+		if val.Station == station {
+			dnrFair = val.Fair
+			dnrGreat = val.Great
+			dnrFan = val.Fan
+		}
 	}
 
 	var totalCount int
 
 	fantastic, great, fair, poor := 22.0, 20.5, 18.0, 13.0
-
-	// fmt.Println("\n\n What is the final data set: ", final_data_set, "\n\n ----")
 
 	for i := 0; i < len(final_data_set); i++ {
 		line := final_data_set[i]
@@ -266,7 +265,6 @@ func calculateStatuses(station string, final_data_set [][]string) ([]string, err
 				missingPercent += percentMap[option]
 			}
 		}
-		fmt.Println("what is the missing percent: ", missingPercent)
 		multiplicative := 1 / (1 - missingPercent)
 
 		if !contains(dontInclude, "dcr_val") {
