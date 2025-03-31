@@ -6,9 +6,7 @@ import (
 )
 
 func (w *Weights) Read(db *sql.DB) (*Weights, error) {
-	row := db.QueryRow("SELECT * FROM weights where ID=?", w.ID)
-
-	fmt.Println("what is the row: ", row)
+	row := db.QueryRow("SELECT * FROM weights where ID=?", 1)
 
 	err := row.Scan(&w.ID, &w.Dcr, &w.DnrDpmo, &w.Ce, &w.Pod, &w.Cc, &w.Dex)
 	if err != nil {

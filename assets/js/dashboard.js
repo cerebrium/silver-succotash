@@ -169,7 +169,8 @@ class UploadFile {
     current_domain = current_domain.replace("dashboard", "api");
 
     for (const [key, value] of Object.entries(weights)) {
-      weights[key] = weights[value] / 100;
+      const new_val = parseInt(value) / 100;
+      weights[key] = parseFloat(new_val.toFixed(3));
     }
 
     weights.ID = 1;
@@ -196,7 +197,7 @@ class UploadFile {
 
       for (const el of form_inputs) {
         if (j_weights[el.id]) {
-          el.value = j_weights[el.id] * 100;
+          el.value = parseFloat(j_weights[el.id] * 100).toFixed(1);
         }
       }
 

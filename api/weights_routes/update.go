@@ -1,6 +1,7 @@
 package weights_routes
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -28,6 +29,8 @@ func UpdateWeights(c echo.Context) error {
 		})
 	}
 
+	fmt.Println("Updates coming in: ", weights)
+
 	err = weights.Update(cc.Db)
 	if err != nil {
 		c.Logger().Errorf("could not update the weights: ", err)
@@ -43,8 +46,9 @@ func UpdateWeights(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not read the weights in the update",
 		})
-
 	}
+
+	fmt.Println("Updated weights: ", updated_weights)
 
 	return helpers.Success(cc, updated_weights)
 }

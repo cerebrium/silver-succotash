@@ -6,6 +6,7 @@ import (
 )
 
 func (w Weights) Update(db *sql.DB) error {
+	fmt.Println("\n\n\n\nUPDATE IS BEING CALLED")
 	query := `
 		UPDATE weights 
 		SET dcr = ?, dnrDpmo = ?, ce = ?, pod = ?, cc = ?, dex = ? 
