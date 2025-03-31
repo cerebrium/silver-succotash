@@ -17,6 +17,8 @@ func WriteLocalDb(db *sql.DB) {
 	CreateWeights(db)
 	PopulateWeights(db)
 
+	// DropStation(db)
+
 	// DNR DPMO
 	CreateStation(db)
 	PopulateStations(db)
@@ -31,8 +33,7 @@ func CreateWeights(db *sql.DB) {
     Ce REAL UNIQUE NOT NULL,
     Pod REAL UNIQUE NOT NULL,
     Cc REAL UNIQUE NOT NULL,
-    Dex REAL UNIQUE NOT NULL,
-	);`)
+    Dex REAL UNIQUE NOT NULL);`)
 	if err != nil {
 		fmt.Println("\n\n\n error creating table: ", err, "\n\n")
 	}
@@ -47,6 +48,7 @@ func PopulateWeights(db *sql.DB) {
 	}
 
 	if count > 0 {
+		fmt.Println("there are weights in the database: ", count)
 		return
 	}
 
@@ -59,16 +61,22 @@ func PopulateWeights(db *sql.DB) {
 	}
 }
 
+func DropStation(db *sql.DB) {
+	_, err := db.Exec(`drop table station`)
+	if err != nil {
+		log.Fatal("Error creating the dnr dpmo: ", err)
+	}
+}
+
 // dnr
 func CreateStation(db *sql.DB) {
 	_, err := db.Exec(
 		`CREATE TABLE IF NOT EXISTS station (
       ID INTEGER PRIMARY KEY AUTOINCREMENT,
       station TEXT UNIQUE NOT NULL,
-      dnr_fan INTEGER NOT NULL,
-      dnr_great INTEGER NOT NULL,
-      dnr_fair INTEGER NOT NULL,
-    );`,
+      fan INTEGER NOT NULL,
+      great INTEGER NOT NULL,
+      fair INTEGER NOT NULL);`,
 	)
 	if err != nil {
 		log.Fatal("Error creating the dnr dpmo: ", err)
@@ -90,6 +98,7 @@ func PopulateStations(db *sql.DB) {
 	}
 
 	if count > 0 {
+		fmt.Println("there are stations: ", count)
 		return
 	}
 
@@ -106,7 +115,7 @@ func PopulateStations(db *sql.DB) {
 	}
 
 	for _, station := range stationDnrs {
-		_, err := db.Exec(`INSERT INTO station (station, fan, great, fair) VALUES (%s, %s, %s, %s)`, station.station, station.fan, station.great, station.fair)
+		_, err := db.Exec(`INSERT INTO station (station, fan, great, fair) VALUES (?, ?, ?, ?)`, station.station, station.fan, station.great, station.fair)
 		if err != nil {
 			log.Fatal("could not insert into db the station: ", err)
 		}

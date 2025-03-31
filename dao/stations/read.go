@@ -6,20 +6,20 @@ import (
 )
 
 func (s *Station) Read(db *sql.DB) (*Station, error) {
-	row := db.QueryRow("SELECT * FROM stations where LOWER(name) LIKE LOWER(?)", s.Station)
+	row := db.QueryRow("SELECT * FROM station where LOWER(name) LIKE LOWER(?)", s.Station)
 
 	err := row.Scan(&s.ID, &s.Station, &s.Fan, &s.Great, &s.Fair)
 	if err != nil {
-		return nil, fmt.Errorf("could not scan stations: %w", err)
+		return nil, fmt.Errorf("could not scan station: %w", err)
 	}
 
 	return s, nil
 }
 
 func ReadAll(db *sql.DB) ([]Station, error) {
-	rows, err := db.Query(`SELECT * FROM stations`)
+	rows, err := db.Query(`SELECT * FROM station`)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve all stations: %w", err)
+		return nil, fmt.Errorf("could not retrieve all station: %w", err)
 	}
 
 	defer rows.Close()

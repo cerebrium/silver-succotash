@@ -1,6 +1,8 @@
-@import "flowbite/src/themes/default";
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+@custom-variant dark (&:where(.dark, .dark *));
 #theme-toggle {
   margin-top: 3px;
 }
@@ -19,11 +21,27 @@
   color: white;
 }
 
-#form_container {
-  z-index: 3;
+#station_form {
+  z-index: 4;
+  display: none;
+  margin: 15px auto;
+  top: 10%;
+  right: 30%;
+  padding: 15px;
+  border-radius: 0.3rem;
+  width: 300px;
 }
 
-button {
-  border: none !important;
-  background: none !important;
+#form_container {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3;
+  justify-content: center;
+  text-align: center;
+  background-color: black;
+  opacity: 0.8;
 }

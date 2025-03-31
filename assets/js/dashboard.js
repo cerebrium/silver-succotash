@@ -24,7 +24,22 @@ class UploadFile {
     this.pdf_input = document.getElementById("dropzone-file");
     this.upload_list_body = document.getElementById("upload_list_body");
     this.weights_button = document.getElementById("weights_button");
-    this.dnr_dpmo_button = document.getElementById("dnr_dpmo_button");
+
+    this.form_container = document.getElementById("form_container");
+
+    this.dnr_dpmo_button = document.getElementById("station_dropdown");
+    this.station_dropdown = document.getElementById("dropdown");
+
+    this.stations_form = document.getElementById("station_form");
+    this.stations_form.addEventListener(
+      "submit",
+      this.submit_station.bind(this),
+    );
+
+    this.current_station = null;
+
+    this.is_displaying_station_form = false;
+    this.is_displaying_weights_form = false;
 
     if (
       !this.pdf_drag_zone ||
@@ -51,8 +66,90 @@ class UploadFile {
     );
   }
 
-  toggle_dnr_dmpl(e) {
-    console.log("the toggle dnr was clicked");
+  /**
+   *
+   * Make the station form visible
+   *
+   */
+  async toggle_dnr_dmpl(e) {
+    this.is_displaying_station_form = !this.is_displaying_station_form;
+
+    if (this.is_displaying_station_form) {
+      // Just let the error break things, f - try/catch
+      if (!e.target.id) {
+        throw new Error("there is no id!");
+      }
+
+      const station_data = await this.get_station_data();
+      const j_station_data = await station_data.json();
+
+      let station_to_display = j_station_data.filter(
+        (el) => el.station === e.target.id,
+      );
+
+      if (station_to_display.length < 1) {
+        throw new Error("there is no station to display");
+      }
+
+      // Make the form show the current values
+      station_to_display = station_to_display[0];
+      const inputs = this.stations_form.querySelectorAll("input");
+      for (const el of inputs) {
+        if (station_to_display[el.id]) {
+          el.value = station_to_display[el.id];
+        }
+      }
+
+      this.current_station = station_to_display;
+
+      this.form_container.style.display = "flex";
+      this.stations_form.style.display = "block";
+      this.station_dropdown.classList.add("hidden");
+
+      return;
+    }
+
+    this.stations_form.style.display = "none";
+    this.form_container.style.display = "none";
+  }
+
+  async submit_station(e) {
+    e.preventDefault();
+    const target = e.target;
+
+    if (!target) {
+      throw new Error("there is no form target");
+    }
+
+    const inputs = target.querySelectorAll("input");
+
+    for (const el of inputs) {
+      this.current_station[el.name] = parseInt(el.value);
+    }
+
+    const res = await this.update_station();
+    console.log("what ia the res: ", res);
+
+    this.current_station = null;
+
+    this.toggle_dnr_dmpl();
+  }
+
+  async update_station() {
+    const endpoint = "/station";
+    let current_domain = window.location.href;
+
+    current_domain = current_domain.replace("dashboard", "api");
+
+    const json_station = JSON.stringify(this.current_station);
+
+    return fetch(current_domain + endpoint, {
+      method: "POST",
+      body: json_station,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 
   toggle_weights_botton(e) {
@@ -180,6 +277,17 @@ class UploadFile {
     return [status, download];
   }
 
+  async get_station_data() {
+    const endpoint = "/station";
+    let current_domain = window.location.href;
+
+    current_domain = current_domain.replace("dashboard", "api");
+
+    return fetch(current_domain + endpoint, {
+      method: "GET",
+    });
+  }
+
   /**
    * Processes a PDF file upload and performs specific actions (e.g., validation, rendering, or uploading).
    *
@@ -198,7 +306,6 @@ class UploadFile {
     const form_data = new FormData();
     form_data.append("file", file);
 
-    console.log("form_data: ", form_data);
     return fetch(current_domain + endpoint, {
       method: "POST",
       body: form_data,
