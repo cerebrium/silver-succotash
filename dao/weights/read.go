@@ -6,11 +6,13 @@ import (
 )
 
 func (w *Weights) Read(db *sql.DB) (*Weights, error) {
-	row := db.QueryRow("SELECT * FROM weights where ID=%s", w.ID)
+	row := db.QueryRow("SELECT * FROM weights where ID=?", w.ID)
 
-	err := row.Scan(&w.ID, &w.Dcr, &w.DnrDpmo, &w.Ce, &w.Cc, &w.Dex)
+	fmt.Println("what is the row: ", row)
+
+	err := row.Scan(&w.ID, &w.Dcr, &w.DnrDpmo, &w.Ce, &w.Pod, &w.Cc, &w.Dex)
 	if err != nil {
-		return nil, fmt.Errorf("could not scan weights: %w", err)
+		return nil, fmt.Errorf("could not scan weights: %v", err)
 	}
 
 	return w, nil

@@ -28,9 +28,6 @@ func UpdateWeights(c echo.Context) error {
 		})
 	}
 
-	// TODO: read in the form input, and update the
-	// vals in the struct to send into the update.
-
 	err = weights.Update(cc.Db)
 	if err != nil {
 		c.Logger().Errorf("could not update the weights: ", err)
