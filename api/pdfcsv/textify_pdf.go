@@ -130,13 +130,23 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	// list, then we can ignore it.... We have an issue, there are
 	// cases where there are more than one value per line.
 
+	force_break := false
 	for m_idx := range len(result) - 1 {
+		if force_break {
+			break
+		}
 		final_strings = append(final_strings, "")
 
 		// The second list starts with an empty space
 		for i := range result[m_idx] {
+			if force_break {
+				break
+			}
 			// Handle more than 2 pages
 			if m_idx > 0 && m_idx > len(driver_numbers)-1 {
+				if force_break {
+					break
+				}
 				// We should be able to walk down the array here
 				// to find the next list of driver id's and create
 				// our count
@@ -146,6 +156,24 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 						err := errors.New("could not find next driver id list")
 						return nil, err
+					}
+
+					// If there is only one line on the second page, the parsing is
+					// not consistant. It will have a line of mixed values.
+					if strings.Contains(strings.TrimSpace(result[m_idx][q]), "%") {
+						split_string := strings.Split(result[m_idx][q], " ")
+
+						for inner_single_value := range split_string {
+							if strings.TrimSpace(split_string[inner_single_value]) == "" {
+								continue
+							}
+							final_strings[m_idx] += " " + strings.TrimSpace(split_string[inner_single_value])
+						}
+
+						// we want to exit here
+						driver_numbers = append(driver_numbers, 1)
+						force_break = true
+						break
 					}
 					if strings.TrimSpace(result[m_idx][q]) != "" {
 						next_page_driver_count := len(strings.Fields(result[m_idx][q]))
@@ -188,6 +216,8 @@ func parse_text_file_created(filename string) ([][]string, error) {
 
 			// The pages past the first never create a driver number
 			if strings.Contains(result[m_idx][i], "Page") {
+				result = append(result, []string{})
+				current_page_idx++
 				break
 			}
 
@@ -287,7 +317,6 @@ func parse_text_file_created(filename string) ([][]string, error) {
 	// We need to group the data by driver
 	for i := range driver_data_matrix[0] {
 		for x := range driver_data_matrix {
-			// fmt.Println("\n---x:  ", x, "\n----- i: ", i)
 			current_dataset = append(current_dataset, driver_data_matrix[x][i])
 		}
 
