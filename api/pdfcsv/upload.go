@@ -35,7 +35,7 @@ func UploadHandler(c echo.Context) error {
 func handler(c echo.Context) ([]string, error) {
 	cc, ok := c.(*localware.LocalUserClerkDbContext)
 	if !ok {
-		c.Logger().Error("could not resolve cc")
+		cc.Logger().Error("could not resolve cc")
 	}
 	// Retrieve the file from the form
 	fileHeader, err := c.FormFile("file")
@@ -51,9 +51,9 @@ func handler(c echo.Context) ([]string, error) {
 	defer file.Close()
 
 	// Get file metadata
-	fileData := UploadPfdFile{
-		Name: fileHeader.Filename,
-	}
+	// fileData := UploadPfdFile{
+	// 	Name: fileHeader.Filename,
+	// }
 
 	dst, err := os.Create(fmt.Sprintf("./uploads/%s", fileHeader.Filename))
 	if err != nil {
@@ -67,10 +67,15 @@ func handler(c echo.Context) ([]string, error) {
 
 	// We need to get the pdf into a format that the below method can
 	// actually work with (text)
-	final_data_set, err := convert_pdf_to_text(fileHeader.Filename)
-	if err != nil {
-		return nil, err
-	}
+	// final_data_set, err := convert_pdf_to_text(fileHeader.Filename)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// err = InternalConvertPdfToText(fileHeader.Filename)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	local_weights := weights.Weights{ID: 1}
 	updated_weights, err := local_weights.Read(cc.Db)
