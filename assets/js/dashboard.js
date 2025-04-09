@@ -26,9 +26,11 @@ class UploadFile {
     this.weights_button = document.getElementById("weights_button");
 
     this.form_container = document.getElementById("form_container");
-
     this.dnr_dpmo_button = document.getElementById("station_dropdown");
     this.station_dropdown = document.getElementById("dropdown");
+
+    this.tier_button = document.getElementById("tier_dropdown");
+    this.tier_dropdown = document.getElementById("dropdown_tier");
 
     this.stations_form = document.getElementById("station_form");
     this.stations_form.addEventListener(
@@ -42,17 +44,23 @@ class UploadFile {
       this.submit_weights.bind(this),
     );
 
+    this.tiers_form = document.getElementById("tier_form");
+    this.tiers_form.addEventListener("submit", this.submit_tiers.bind(this));
+
     this.current_station = null;
+    this.current_tier = null;
 
     this.is_displaying_station_form = false;
     this.is_displaying_weights_form = false;
+    this.is_displaying_tier_form = false;
 
     if (
       !this.pdf_drag_zone ||
       !this.pdf_input ||
       !this.upload_list_body ||
       !this.weights_button ||
-      !this.dnr_dpmo_button
+      !this.dnr_dpmo_button ||
+      !this.tier_button
     ) {
       throw new Error("There is no drag zone");
     }
@@ -65,6 +73,11 @@ class UploadFile {
     this.dnr_dpmo_button.addEventListener(
       "click",
       this.toggle_dnr_dmpl.bind(this),
+    );
+
+    this.tier_button.addEventListener(
+      "click",
+      this.toggle_tier_form.bind(this),
     );
     this.weights_button.addEventListener(
       "click",
@@ -120,6 +133,73 @@ class UploadFile {
     const user_display = document.querySelector(".cl-userButtonTrigger");
 
     user_display.click();
+  }
+
+  // TODO: Implement update
+  async submit_tiers(e) {
+    e.preventDefault();
+    const target = e.target;
+
+    if (!target) {
+      throw new Error("there is no form target");
+    }
+
+    const inputs = target.querySelectorAll("input");
+    const tiers = {};
+
+    for (const el of inputs) {
+      switch (el.name) {
+        case "fantastic_plus":
+          tiers["fan_plus"] = parseFloat(parseFloat(el.value).toFixed(2));
+          continue;
+        case "fantastic":
+          tiers["fan"] = parseFloat(parseFloat(el.value).toFixed(2));
+          continue;
+
+        default:
+          tiers[el.name] = parseFloat(parseFloat(el.value).toFixed(2));
+      }
+    }
+
+    // Get all the tiers
+
+    const tier_data = await this.get_tier_data();
+    const j_tier_data = await tier_data.json();
+
+    // find the one to update, then push the changes, send all the
+    // data as json
+
+    for (let vals of j_tier_data) {
+      if (vals.name.toLowerCase() === this.current_tier.toLowerCase()) {
+        for (const key in vals) {
+          if (key === "id" || key === "name") {
+            continue;
+          }
+          vals[key] = tiers[key];
+        }
+      }
+    }
+
+    const endpoint = "/tiers";
+    let current_domain = window.location.href;
+
+    current_domain = current_domain.replace("dashboard", "api");
+
+    const json_tier_data = JSON.stringify(j_tier_data);
+    this.current_tier = null;
+
+    fetch(current_domain + endpoint, {
+      method: "POST",
+      body: json_tier_data,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    this.tiers_form.style.display = "none";
+    this.form_container.style.display = "none";
+
+    return;
   }
 
   async submit_weights(e) {
@@ -227,6 +307,75 @@ class UploadFile {
     });
   }
 
+  async get_tier_data() {
+    const endpoint = "/tiers";
+    let current_domain = window.location.href;
+
+    current_domain = current_domain.replace("dashboard", "api");
+
+    return fetch(current_domain + endpoint, {
+      method: "GET",
+    });
+  }
+
+  /**
+   *
+   * Make the tier form visible
+   *
+   */
+
+  async toggle_tier_form(e) {
+    this.is_displaying_tier_form = !this.is_displaying_tier_form;
+
+    if (this.is_displaying_tier_form) {
+      if (!e.target.id) {
+        throw new Error("there is no id!");
+      }
+
+      this.current_tier = e.target.id;
+
+      const tier_data = await this.get_tier_data();
+      const j_tier_data = await tier_data.json();
+
+      console.log("what is the id: ", e.target.id);
+
+      let data_to_populate = null;
+      for (const vals of j_tier_data) {
+        console.log("what is the vals: ", vals);
+        if (vals.name.toLowerCase() === e.target.id.toLowerCase()) {
+          data_to_populate = vals;
+        }
+      }
+
+      console.log("what are the data_to_populate: ", data_to_populate);
+
+      const inputs = this.tiers_form.querySelectorAll("input");
+      for (const el of inputs) {
+        switch (el.id) {
+          case "fantastic": {
+            el.value = data_to_populate["fan"];
+            continue;
+          }
+          case "fantastic_plus": {
+            el.value = data_to_populate["fan_plus"];
+            continue;
+          }
+          default:
+            el.value = data_to_populate[el.id];
+        }
+      }
+
+      this.form_container.style.display = "flex";
+      this.tiers_form.style.display = "block";
+      this.tier_dropdown.classList.add("hidden");
+
+      console.log("what is the data: ", j_tier_data);
+      return;
+    }
+
+    this.tiers_form.style.display = "none";
+    this.form_container.style.display = "none";
+  }
   /**
    *
    * Make the station form visible

@@ -2,10 +2,13 @@ package pdfcsv
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -82,14 +85,37 @@ func handler(c echo.Context) ([]string, error) {
 		return nil, err
 	}
 
-	stations, err := stations.ReadAll(cc.Db)
+	fetched_stations, err := stations.ReadAll(cc.Db)
 	if err != nil {
+		return nil, err
+	}
+
+	trimmed_file_name := strings.TrimSpace(fileHeader.Filename)
+
+	var station_val stations.Station
+	found := false
+	for _, stat := range fetched_stations {
+		if strings.Contains(trimmed_file_name, stat.Station) {
+			found = true
+			station_val = stat
+		}
+	}
+
+	if !found {
+		err := errors.New("could not find station")
+		c.Logger().Error("could not find station")
 		return nil, err
 	}
 
 	tierList, err := tiers.ReadTiers(cc.Db)
 	if err != nil {
 		return nil, err
+	}
+
+	tierMap := TierMap{}
+
+	for _, val := range tierList {
+		tierMap[val.Name] = val
 	}
 
 	percentMap := PercentMap{}
@@ -136,76 +162,160 @@ func handler(c echo.Context) ([]string, error) {
 				continue
 			}
 
-			writeStatus(line, percentMap, stations, csv_list, tierList)
+			writeStatus(line, percentMap, station_val, &csv_list, tierMap)
 			testing += 1
 		}
 	}
 
-	return []string{}, nil
+	return csv_list, nil
 }
 
-func writeStatus(line string, percentMap PercentMap, stations []stations.Station, csv_list []string, tierList []*tiers.Tiers) {
+func roundFloat(f float64, precision int) string {
+	pow := math.Pow(10, float64(precision))
+	roundedValue := math.Round(f*pow) / pow
+
+	return strconv.FormatFloat(roundedValue, 'f', 2, 64)
+}
+
+func writeStatus(line string, percentMap PercentMap, station stations.Station, csv_list *[]string, tierMap TierMap) {
 	/*
-	*
-	* We want to come up with an overall number out of 100.
-	*  We will take each value from the line. It is always in the
-	*  same order. Compute the amount, into the tier creating a
-	*  percent.
-	*
-	* With that percent, we can then multiply the weight by the
-	* created percent.
-	*
-	* With the final values, we can sum them and get the overal
-	* int. With the, we can fit it into the tier mapping for what
-	* the overall status -> percent overall is.
-	*
-	* Order:ID Delivered DCR DNRDPMO LoRDPMO POD CC CE DEX
-	*
-	 */
+			*
+			* We want to come up with an overall number out of 100.
+			*  We will take each value from the line. It is always in the
+			*  same order. Compute the amount, into the tier creating a
+			*  percent.
+			*
+			* With that percent, we can then multiply the weight by the
+			* created percent.
+			*
+			* With the final values, we can sum them and get the overal
+			* int. With the, we can fit it into the tier mapping for what
+			* the overall status -> percent overall is.
+			*
+			* Order:ID Delivered DCR DNRDPMO LoRDPMO POD CC CE DEX
+			*
+		*
+	*/
+
+	overall_tiers := []float64{
+		1, .95, .9, .8, .5,
+	}
 
 	csv_line := ""
 	for idx, val := range strings.Split(line, " ") {
+		final_total := 0.00
 		fmt.Println("val: ", val, "\nidx: ", idx)
+		parsed_val := strings.TrimSpace(val)
+
+		if strings.Contains(parsed_val, "%") {
+			parsed_val = strings.TrimSuffix(parsed_val, "%")
+		}
+
+		floatValue, err := strconv.ParseFloat(parsed_val, 64)
+		if err != nil {
+			fmt.Println("Error parsing float:", err)
+			return
+		}
+
+		var tier *tiers.Tiers
+		var per float64
+
 		switch idx {
 		case 2:
 			// DCR
-			dcr_per := percentMap["dcr_val"]
+			per = percentMap["dcr_val"] * 100
+			tier = tierMap["Dcr"]
 
-			continue
 		case 3:
 			// DNRDPMO
-			dnr_per := percentMap["dnr_dpmo_val"]
+			per = percentMap["dnr_dpmo_val"] * 100
+
+			// Special case, less than instead of greater
+			if floatValue < float64(station.Fan) {
+				final_total += per
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
+
+				continue
+			}
+			if floatValue < float64(station.Great) {
+				final_total += per * overall_tiers[1]
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
+
+				continue
+			}
+			if floatValue < float64(station.Fair) {
+				final_total += per * overall_tiers[2]
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+
+				continue
+			}
+
+			final_total += per * overall_tiers[4]
 			continue
 		case 4:
 			// LoRDPMO
-			ce_per := percentMap["ce_val"]
-			continue
+			per = percentMap["ce_val"] * 100
+			tier = tierMap["Ce"]
+
 		case 5:
 			// POD
-			pod_per := percentMap["pod_val"]
-			continue
+			per = percentMap["pod_val"] * 100
+			tier = tierMap["Pod"]
+
 		case 6:
 			// CC
-			cc_per := percentMap["cc_val"]
-			continue
+			per = percentMap["cc_val"] * 100
+			tier = tierMap["Cc"]
+
 		case 7:
 			// CE
-			ce_per := percentMap["dex_val"]
-			continue
+			per = percentMap["dex_val"] * 100
+			tier = tierMap["Dex"]
+
 		case 8:
 			// DEX
-			dex_per := percentMap["lor_val"]
-			continue
+			per = percentMap["lor_val"] * 100
+			tier = tierMap["Lor"]
+
 		default:
 			csv_line += "" + val + ","
+			continue
 		}
+
+		if floatValue > tier.FanPlus {
+			final_total += per
+
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
+			continue
+		}
+		if floatValue > tier.Fan {
+			final_total += per * overall_tiers[1]
+
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
+			continue
+		}
+		if floatValue > tier.Great {
+			final_total += per * overall_tiers[2]
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+			continue
+		}
+		if floatValue > tier.Fair {
+			final_total += per * overall_tiers[3]
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[3], 2) + ","
+			continue
+		}
+
+		final_total += per * overall_tiers[4]
+		csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[4], 2) + ","
+
 	}
 
-	csv_list = append(csv_list, csv_line)
+	*csv_list = append(*csv_list, csv_line)
 }
 
 type (
 	WrongObjCount map[string]int
 	WrongObj      map[string]WrongObjCount
 	PercentMap    map[string]float64
+	TierMap       map[string]*tiers.Tiers
 )
