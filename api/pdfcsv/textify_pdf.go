@@ -16,9 +16,15 @@ func InternalConvertPdfToText(filename string) error {
 	txt_file := strings.Replace(filePath, ".pdf", ".txt", -1)
 	txt_file_destination := filepath.Join(txt_file)
 
+	// Check the cache for the txt file
+	_, err := os.Open(txt_file_destination)
+	if err == nil {
+		return nil
+	}
+
 	unidoc_key := os.Getenv("UNICODE_SECRET_KEY")
 	fmt.Println("\n\n THE CODE: ", unidoc_key, "\n\n")
-	err := license.SetMeteredKey(unidoc_key)
+	err = license.SetMeteredKey(unidoc_key)
 	if err != nil {
 		fmt.Printf("error with unicode key: ", err)
 		return err

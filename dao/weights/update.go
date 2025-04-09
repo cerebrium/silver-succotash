@@ -9,7 +9,7 @@ func (w Weights) Update(db *sql.DB) error {
 	fmt.Println("\n\n\n\nUPDATE IS BEING CALLED")
 	query := `
 		UPDATE weights 
-		SET dcr = ?, dnrDpmo = ?, ce = ?, pod = ?, cc = ?, dex = ? 
+		SET dcr = ?, dnrDpmo = ?, ce = ?, pod = ?, cc = ?, dex = ?, lor = ?
 		WHERE ID = ?;
 	`
 	result, err := db.Exec(query, w.Dcr, w.DnrDpmo, w.Ce, w.Pod, w.Cc, w.Dex, w.ID)
