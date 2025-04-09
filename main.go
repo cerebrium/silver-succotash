@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
 	"hopdf.com/api/pdfcsv"
 	"hopdf.com/api/stations_routes"
+	"hopdf.com/api/tiers_routes"
 	"hopdf.com/api/weights_routes"
 	"hopdf.com/db"
 	"hopdf.com/localware"
@@ -110,6 +112,16 @@ func main() {
 	authApp.POST("/api/weights", func(c echo.Context) error {
 		return weights_routes.UpdateWeights(c)
 	})
+
+	authApp.GET("/api/tiers", func(c echo.Context) error {
+		fmt.Println("Inside the get tiers")
+		return tiers_routes.ReadTiers(c)
+	})
+
+	authApp.POST("/api/tiers", func(c echo.Context) error {
+		return tiers_routes.UpdateTiers(c)
+	})
+
 	authApp.GET("/metrics", echoprometheus.NewHandler()) // adds route to serve gathered metrics
 
 	// 404 for routes not mounted

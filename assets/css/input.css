@@ -43,6 +43,16 @@
   width: 300px;
 }
 
+#tier_form {
+  z-index: 4;
+  display: none;
+  top: 10%;
+  right: 40%;
+  padding: 15px;
+  border-radius: 0.3rem;
+  width: 300px;
+}
+
 #form_container {
   display: none;
   position: absolute;
@@ -64,9 +74,9 @@
 .input-with-percent::after {
   content: "%";
   position: absolute;
-  right: 35px; /* Adjust as needed */
+  right: 35px;
   top: 50%;
   transform: translateY(-50%);
-  pointer-events: none; /* Prevent the "%" from interfering with input */
-  color: gray; /* or any color you prefer */
+  pointer-events: none;
+  color: gray;
 }

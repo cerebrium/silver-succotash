@@ -1,15 +1,20 @@
 package pdfcsv
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
 	"io"
+	"math"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 	"hopdf.com/dao/pdfcsv"
 	"hopdf.com/dao/stations"
+	"hopdf.com/dao/tiers"
 	"hopdf.com/dao/weights"
 	"hopdf.com/helpers"
 	"hopdf.com/localware"
@@ -51,9 +56,13 @@ func handler(c echo.Context) ([]string, error) {
 	defer file.Close()
 
 	// Get file metadata
-	fileData := UploadPfdFile{
-		Name: fileHeader.Filename,
-	}
+	// fileData := UploadPfdFile{
+	// 	Name: fileHeader.Filename,
+	// }
+	//
+	filePath := filepath.Join("./uploads", fileHeader.Filename)
+	txt_file := strings.Replace(filePath, ".pdf", ".txt", -1)
+	txt_file_destination := filepath.Join(txt_file)
 
 	dst, err := os.Create(fmt.Sprintf("./uploads/%s", fileHeader.Filename))
 	if err != nil {
@@ -65,9 +74,7 @@ func handler(c echo.Context) ([]string, error) {
 		return nil, err
 	}
 
-	// We need to get the pdf into a format that the below method can
-	// actually work with (text)
-	final_data_set, err := convert_pdf_to_text(fileHeader.Filename)
+	err = InternalConvertPdfToText(fileHeader.Filename)
 	if err != nil {
 		return nil, err
 	}
@@ -78,9 +85,37 @@ func handler(c echo.Context) ([]string, error) {
 		return nil, err
 	}
 
-	stations, err := stations.ReadAll(cc.Db)
+	fetched_stations, err := stations.ReadAll(cc.Db)
 	if err != nil {
 		return nil, err
+	}
+
+	trimmed_file_name := strings.TrimSpace(fileHeader.Filename)
+
+	var station_val stations.Station
+	found := false
+	for _, stat := range fetched_stations {
+		if strings.Contains(trimmed_file_name, stat.Station) {
+			found = true
+			station_val = stat
+		}
+	}
+
+	if !found {
+		err := errors.New("could not find station")
+		c.Logger().Error("could not find station")
+		return nil, err
+	}
+
+	tierList, err := tiers.ReadTiers(cc.Db)
+	if err != nil {
+		return nil, err
+	}
+
+	tierMap := TierMap{}
+
+	for _, val := range tierList {
+		tierMap[val.Name] = val
 	}
 
 	percentMap := PercentMap{}
@@ -90,231 +125,236 @@ func handler(c echo.Context) ([]string, error) {
 	percentMap["pod_val"] = updated_weights.Pod
 	percentMap["cc_val"] = updated_weights.Cc
 	percentMap["dex_val"] = updated_weights.Dex
+	percentMap["lor_val"] = updated_weights.Lor
 
-	csv_to_write, err := process_data(final_data_set, fileData.Name, percentMap, stations)
+	csv_list := []string{}
+
+	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,LoR DPMO,POD,CC,CE,DEX\n"
+	csv_list = append(csv_list, csv_headers)
+
+	stringified_pdf, err := os.Open(txt_file_destination)
 	if err != nil {
 		return nil, err
 	}
 
-	return csv_to_write, nil
+	defer stringified_pdf.Close()
+
+	scanner := bufio.NewScanner(stringified_pdf)
+	should_compute := false
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.Contains(line, "DSP WEEKLY SUMMARY") {
+			should_compute = true
+			continue
+		}
+
+		if strings.Contains(line, "Drivers With Working Hour Exceptions") {
+			should_compute = false
+			break
+		}
+
+		if should_compute {
+			if strings.Contains(line, "Transporter ID") || strings.Contains(line, "Page") || strings.TrimSpace(line) == "" {
+				continue
+			}
+
+			writeStatus(line, percentMap, station_val, &csv_list, tierMap)
+		}
+	}
+
+	return csv_list, nil
+}
+
+func roundFloat(f float64, precision int) string {
+	pow := math.Pow(10, float64(precision))
+	roundedValue := math.Round(f*pow) / pow
+
+	return strconv.FormatFloat(roundedValue, 'f', 2, 64)
+}
+
+func writeStatus(line string, percentMap PercentMap, station stations.Station, csv_list *[]string, tierMap TierMap) {
+	/*
+			*
+			* We want to come up with an overall number out of 100.
+			*  We will take each value from the line. It is always in the
+			*  same order. Compute the amount, into the tier creating a
+			*  percent.
+			*
+			* With that percent, we can then multiply the weight by the
+			* created percent.
+			*
+			* With the final values, we can sum them and get the overal
+			* int. With the, we can fit it into the tier mapping for what
+			* the overall status -> percent overall is.
+			*
+			* Order:ID Delivered DCR DNRDPMO LoRDPMO POD CC CE DEX
+			*
+		*
+	*/
+
+	overall_tiers := []float64{
+		.98, .95, .85, .7, .6,
+	}
+
+	overall_rating := []float64{
+		98, 95, 85, 7, 6,
+	}
+
+	final_total := 0.00
+	csv_line := ""
+
+	for idx, val := range strings.Split(line, " ") {
+		if idx > 8 {
+
+			if final_total > overall_rating[0] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "fantastic plus\n"
+				break
+			}
+			if final_total > overall_rating[1] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "fantastic\n"
+				break
+			}
+			if final_total > overall_rating[2] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "great\n"
+				break
+			}
+			if final_total > overall_rating[3] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "fair\n"
+				break
+			}
+			if final_total > overall_rating[4] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "poor \n"
+				break
+			}
+			csv_line += "" + roundFloat(final_total, 2) + " | " + "terrible\n"
+			break
+		}
+
+		parsed_val := strings.TrimSpace(val)
+
+		if strings.Contains(parsed_val, "%") {
+			parsed_val = strings.TrimSuffix(parsed_val, "%")
+		}
+
+		if parsed_val == "-" {
+			if idx == 3 || idx == 4 || idx == 7 {
+				parsed_val = "0.00"
+			} else {
+				parsed_val = "100.00"
+			}
+		}
+
+		if idx < 2 {
+			csv_line += "" + val + ","
+			continue
+		}
+
+		floatValue, err := strconv.ParseFloat(parsed_val, 64)
+		if err != nil {
+			fmt.Println("Error parsing float:", err)
+			return
+		}
+
+		var tier *tiers.Tiers
+		var per float64
+
+		switch idx {
+		case 2:
+
+			// DCR
+			per = percentMap["dcr_val"] * 100
+			tier = tierMap["Dcr"]
+
+		case 3:
+			// DNRDPMO
+			per = percentMap["dnr_dpmo_val"] * 100
+
+			// Special case, less than instead of greater
+			if floatValue < float64(station.Fan) {
+				final_total += per
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
+
+				continue
+			}
+			if floatValue < float64(station.Great) {
+				final_total += per * overall_tiers[1]
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
+
+				continue
+			}
+			if floatValue < float64(station.Fair) {
+				final_total += per * overall_tiers[2]
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+
+				continue
+			}
+
+			final_total += per * overall_tiers[4]
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+			continue
+		case 4:
+			// LoRDPMO
+			per = percentMap["ce_val"] * 100
+			tier = tierMap["Ce"]
+
+		case 5:
+			// POD
+			per = percentMap["pod_val"] * 100
+			tier = tierMap["Pod"]
+
+		case 6:
+			// CC
+			per = percentMap["cc_val"] * 100
+			tier = tierMap["Cc"]
+
+		case 7:
+			// CE
+			per = percentMap["dex_val"] * 100
+			tier = tierMap["Dex"]
+
+		case 8:
+			// DEX
+			per = percentMap["lor_val"] * 100
+			tier = tierMap["Lor"]
+
+		default:
+			continue
+		}
+
+		if floatValue > tier.FanPlus {
+			final_total += per
+
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
+			continue
+		}
+		if floatValue > tier.Fan {
+			final_total += per * overall_tiers[1]
+
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
+			continue
+		}
+		if floatValue > tier.Great {
+			final_total += per * overall_tiers[2]
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+			continue
+		}
+		if floatValue > tier.Fair {
+			final_total += per * overall_tiers[3]
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[3], 2) + ","
+			continue
+		}
+
+		final_total += per * overall_tiers[4]
+		csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[4], 2) + ","
+
+	}
+
+	*csv_list = append(*csv_list, csv_line)
 }
 
 type (
 	WrongObjCount map[string]int
 	WrongObj      map[string]WrongObjCount
 	PercentMap    map[string]float64
+	TierMap       map[string]*tiers.Tiers
 )
-
-func process_data(final_data_set [][]string, file_name string, PercentMap PercentMap, stations []stations.Station) ([]string, error) {
-	trimmed_file_name := strings.TrimSpace(file_name)
-
-	stations_list := []string{"DRG2", "DSN1", "DBS3", "DBS2", "DEX2", "DCF1", "DSA1", "DPO1", "DOX2"}
-
-	var station string
-
-	for i := 0; i < len(stations_list); i++ {
-		if strings.Contains(trimmed_file_name, stations_list[i]) {
-			station = stations_list[i]
-		}
-	}
-
-	csv_to_write, err := calculateStatuses(station, final_data_set, PercentMap, stations)
-	if err != nil {
-		return nil, err
-	}
-
-	return csv_to_write, nil
-}
-
-func calculateStatuses(station string, final_data_set [][]string, percentMap PercentMap, stations []stations.Station) ([]string, error) {
-	final_csv := []string{"Transporter ID, Status, Delivered, DCR, DNR DPMO, POD, CC, CE, DEX\n"}
-
-	dnrFan, dnrGreat, dnrFair := 1100, 1100, 1100
-
-	// Find the station, and set the vals
-	for _, val := range stations {
-		if val.Station == station {
-			dnrFair = val.Fair
-			dnrGreat = val.Great
-			dnrFan = val.Fan
-		}
-	}
-
-	var totalCount int
-
-	fantastic, great, fair, poor := 22.0, 20.5, 18.0, 13.0
-
-	for i := 0; i < len(final_data_set); i++ {
-		line := final_data_set[i]
-
-		totalCount++
-		currentRating := 0.0
-		dontInclude := []string{}
-
-		// Extract and parse fields
-		dcr := line[2]
-		dnrDpmo := line[3]
-		pod := line[4]
-		cc := line[5]
-		ce := line[6]
-		dex := line[7]
-
-		// Process DCR
-		var dcrVal float64
-		if dcr == "" {
-			continue
-		}
-		dcrVal, _ = strconv.ParseFloat(strings.TrimSuffix(dcr, "%"), 64)
-		switch {
-		case dcrVal >= 99:
-			dcrVal = fantastic
-		case dcrVal >= 98.75:
-			dcrVal = great
-		case dcrVal >= 98:
-			dcrVal = fair
-		default:
-			dcrVal = poor
-		}
-
-		// Process DNR DPMO
-		var dnrDpmoVal float64
-		if dnrDpmo == "-" {
-			dontInclude = append(dontInclude, "dnr_dpmo_val")
-		} else {
-			dnrDpmoVal, _ = strconv.ParseFloat(dnrDpmo, 64)
-			switch {
-			case dnrDpmoVal < float64(dnrFan):
-				dnrDpmoVal = fantastic
-			case dnrDpmoVal < float64(dnrGreat):
-				dnrDpmoVal = great
-			case dnrDpmoVal < float64(dnrFair):
-				dnrDpmoVal = fair
-			default:
-				dnrDpmoVal = poor
-			}
-		}
-
-		// Process POD
-		var podVal float64
-		if pod == "-" {
-			dontInclude = append(dontInclude, "pod_val")
-		} else {
-			podVal, _ = strconv.ParseFloat(strings.TrimSuffix(pod, "%"), 64)
-			switch {
-			case podVal >= 98.9:
-				podVal = fantastic
-			case podVal > 98:
-				podVal = great
-			case podVal > 97:
-				podVal = fair
-			default:
-				podVal = poor
-			}
-		}
-
-		// Process CC
-		var ccVal float64
-		if cc == "-" {
-			dontInclude = append(dontInclude, "cc_val")
-		} else {
-			ccVal, _ = strconv.ParseFloat(strings.TrimSuffix(cc, "%"), 64)
-			switch {
-			case ccVal > 98:
-				ccVal = fantastic
-			case ccVal > 95:
-				ccVal = great
-			case ccVal > 90:
-				ccVal = fair
-			default:
-				ccVal = poor
-			}
-		}
-
-		// Process DEX
-		var dexVal float64
-		if dex == "-" {
-			dontInclude = append(dontInclude, "dex_val")
-		} else {
-			dexVal, _ = strconv.ParseFloat(strings.TrimSuffix(dex, "%"), 64)
-			switch {
-			case dexVal > 87:
-				dexVal = fantastic
-			case dexVal > 83:
-				dexVal = great
-			case dexVal > 80:
-				dexVal = fair
-			default:
-				dexVal = poor
-			}
-		}
-
-		// Process CE
-		var ceVal float64
-		ceVal, _ = strconv.ParseFloat(ce, 64)
-		if ceVal == 0 {
-			ceVal = fantastic
-		} else {
-			ceVal = poor
-		}
-
-		// Calculate rating
-		options := []string{"dcr_val", "dnr_dpmo_val", "ce_val", "pod_val", "cc_val", "dex_val"}
-		missingPercent := 0.0
-		for _, option := range options {
-			if contains(dontInclude, option) {
-				missingPercent += percentMap[option]
-			}
-		}
-		multiplicative := 1 / (1 - missingPercent)
-
-		if !contains(dontInclude, "dcr_val") {
-			currentRating += dcrVal * (0.35 * multiplicative)
-		}
-		if !contains(dontInclude, "dnr_dpmo_val") {
-			currentRating += dnrDpmoVal * (0.35 * multiplicative)
-		}
-		if !contains(dontInclude, "ce_val") {
-			currentRating += ceVal * (0.075 * multiplicative)
-		}
-		if !contains(dontInclude, "pod_val") {
-			currentRating += podVal * (0.075 * multiplicative)
-		}
-		if !contains(dontInclude, "cc_val") {
-			currentRating += ccVal * (0.075 * multiplicative)
-		}
-		if !contains(dontInclude, "dex_val") {
-			currentRating += dexVal * (0.075 * multiplicative)
-		}
-
-		// Determine status
-		status := determineStatus(currentRating)
-		content := fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", line[0], status, line[1], dcr, dnrDpmo, pod, cc, ce, dex)
-		final_csv = append(final_csv, content)
-	}
-
-	return final_csv, nil
-}
-
-func determineStatus(rating float64) string {
-	switch {
-	case rating > 21.25:
-		return "FANTASTIC_PLUS"
-	case rating > 20.2:
-		return "FANTASTIC"
-	case rating > 18.85:
-		return "GREAT"
-	case rating > 17.951:
-		return "FAIR"
-	default:
-		return "POOR"
-	}
-}
-
-func contains(slice []string, value string) bool {
-	for _, v := range slice {
-		if v == value {
-			return true
-		}
-	}
-	return false
-}
