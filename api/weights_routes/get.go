@@ -1,7 +1,6 @@
 package weights_routes
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -19,8 +18,6 @@ func ReadWeights(c echo.Context) error {
 			"error": "could not resolve cc",
 		})
 	}
-
-	fmt.Println("\n\n\n INSIDE THE READ WEIGHTS")
 
 	weights := weights.Weights{
 		ID: 1,

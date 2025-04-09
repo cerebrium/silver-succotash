@@ -129,7 +129,7 @@ func handler(c echo.Context) ([]string, error) {
 
 	csv_list := []string{}
 
-	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,LoR DPMO,POD,CC,CE,DEX"
+	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,LoR DPMO,POD,CC,CE,DEX\n"
 	csv_list = append(csv_list, csv_headers)
 
 	stringified_pdf, err := os.Open(txt_file_destination)
@@ -141,11 +141,7 @@ func handler(c echo.Context) ([]string, error) {
 
 	scanner := bufio.NewScanner(stringified_pdf)
 	should_compute := false
-	testing := 0
 	for scanner.Scan() {
-		if testing > 1 {
-			return []string{}, nil
-		}
 		line := scanner.Text()
 		if strings.Contains(line, "DSP WEEKLY SUMMARY") {
 			should_compute = true
@@ -163,7 +159,6 @@ func handler(c echo.Context) ([]string, error) {
 			}
 
 			writeStatus(line, percentMap, station_val, &csv_list, tierMap)
-			testing += 1
 		}
 	}
 
@@ -198,17 +193,60 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 	*/
 
 	overall_tiers := []float64{
-		1, .95, .9, .8, .5,
+		.98, .95, .85, .7, .6,
 	}
 
+	overall_rating := []float64{
+		98, 95, 85, 7, 6,
+	}
+
+	final_total := 0.00
 	csv_line := ""
+
 	for idx, val := range strings.Split(line, " ") {
-		final_total := 0.00
-		fmt.Println("val: ", val, "\nidx: ", idx)
+		if idx > 8 {
+
+			if final_total > overall_rating[0] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "fantastic plus\n"
+				break
+			}
+			if final_total > overall_rating[1] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "fantastic\n"
+				break
+			}
+			if final_total > overall_rating[2] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "great\n"
+				break
+			}
+			if final_total > overall_rating[3] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "fair\n"
+				break
+			}
+			if final_total > overall_rating[4] {
+				csv_line += "" + roundFloat(final_total, 2) + " | " + "poor \n"
+				break
+			}
+			csv_line += "" + roundFloat(final_total, 2) + " | " + "terrible\n"
+			break
+		}
+
 		parsed_val := strings.TrimSpace(val)
 
 		if strings.Contains(parsed_val, "%") {
 			parsed_val = strings.TrimSuffix(parsed_val, "%")
+		}
+
+		if parsed_val == "-" {
+			if idx == 3 || idx == 4 || idx == 7 {
+				parsed_val = "0.00"
+			} else {
+				parsed_val = "100.00"
+			}
+		}
+
+		if idx < 2 {
+			csv_line += "" + val + ","
+			continue
 		}
 
 		floatValue, err := strconv.ParseFloat(parsed_val, 64)
@@ -222,6 +260,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 
 		switch idx {
 		case 2:
+
 			// DCR
 			per = percentMap["dcr_val"] * 100
 			tier = tierMap["Dcr"]
@@ -251,6 +290,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			}
 
 			final_total += per * overall_tiers[4]
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
 			continue
 		case 4:
 			// LoRDPMO
@@ -278,7 +318,6 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			tier = tierMap["Lor"]
 
 		default:
-			csv_line += "" + val + ","
 			continue
 		}
 

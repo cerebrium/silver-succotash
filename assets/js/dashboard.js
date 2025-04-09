@@ -337,17 +337,12 @@ class UploadFile {
       const tier_data = await this.get_tier_data();
       const j_tier_data = await tier_data.json();
 
-      console.log("what is the id: ", e.target.id);
-
       let data_to_populate = null;
       for (const vals of j_tier_data) {
-        console.log("what is the vals: ", vals);
         if (vals.name.toLowerCase() === e.target.id.toLowerCase()) {
           data_to_populate = vals;
         }
       }
-
-      console.log("what are the data_to_populate: ", data_to_populate);
 
       const inputs = this.tiers_form.querySelectorAll("input");
       for (const el of inputs) {
@@ -369,7 +364,6 @@ class UploadFile {
       this.tiers_form.style.display = "block";
       this.tier_dropdown.classList.add("hidden");
 
-      console.log("what is the data: ", j_tier_data);
       return;
     }
 
