@@ -322,7 +322,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 		}
 
 		// Lower is better categories
-		if idx == 8 || idx == 7 {
+		if idx == 4 || idx == 7 {
 			if floatValue < tier.FanPlus {
 				final_total += per
 
