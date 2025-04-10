@@ -293,9 +293,10 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
 			continue
 		case 4:
+
 			// LoRDPMO
-			per = percentMap["ce_val"] * 100
-			tier = tierMap["Ce"]
+			per = percentMap["lor_val"] * 100
+			tier = tierMap["Lor"]
 
 		case 5:
 			// POD
@@ -309,15 +310,33 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 
 		case 7:
 			// CE
+			per = percentMap["ce_val"] * 100
+
+			int_val, err := strconv.Atoi(val)
+			if err != nil {
+				csv_line += "error"
+				break
+			}
+
+			if int_val > 0 {
+				csv_line += "" + val + " | " + "0"
+				break
+			}
+
+			csv_line += "0 | " + roundFloat(per, 2)
+			final_total += per
+
+			break
+		case 8:
+			// DEX
 			per = percentMap["dex_val"] * 100
 			tier = tierMap["Dex"]
 
-		case 8:
-			// DEX
-			per = percentMap["lor_val"] * 100
-			tier = tierMap["Lor"]
-
 		default:
+			continue
+		}
+
+		if idx == 7 {
 			continue
 		}
 
