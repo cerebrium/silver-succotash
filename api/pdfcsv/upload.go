@@ -315,18 +315,18 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			int_val, err := strconv.Atoi(val)
 			if err != nil {
 				csv_line += "error"
-				break
+				continue
 			}
 
 			if int_val > 0 {
-				csv_line += "" + val + " | " + "0"
-				break
+				csv_line += "" + val + " | " + "0,"
+				continue
 			}
 
-			csv_line += "0 | " + roundFloat(per, 2)
+			csv_line += "0 | " + roundFloat(per, 2) + ","
 			final_total += per
 
-			break
+			continue
 		case 8:
 			// DEX
 			per = percentMap["dex_val"] * 100
