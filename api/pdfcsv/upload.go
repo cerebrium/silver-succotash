@@ -321,6 +321,37 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			continue
 		}
 
+		// Lower is better categories
+		if idx == 8 || idx == 7 {
+			if floatValue < tier.FanPlus {
+				final_total += per
+
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
+				continue
+			}
+			if floatValue < tier.Fan {
+				final_total += per * overall_tiers[1]
+
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
+				continue
+			}
+			if floatValue < tier.Great {
+				final_total += per * overall_tiers[2]
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+				continue
+			}
+			if floatValue < tier.Fair {
+				final_total += per * overall_tiers[3]
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[3], 2) + ","
+				continue
+			}
+
+			final_total += per * overall_tiers[4]
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[4], 2) + ","
+
+			continue
+		}
+
 		if floatValue > tier.FanPlus {
 			final_total += per
 
