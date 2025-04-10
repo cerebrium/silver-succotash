@@ -21,6 +21,7 @@ import (
 	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/unidoc/unipdf/v3/common/license"
 	"golang.org/x/time/rate"
 )
 
@@ -88,6 +89,13 @@ func main() {
 
 	// Add user struct to context
 	authApp.Use(localware.AddLocalUser)
+
+	unidoc_key := os.Getenv("UNICODE_SECRET_KEY")
+	fmt.Println("\n\n THE CODE: ", unidoc_key, "\n\n")
+	err = license.SetMeteredKey(unidoc_key)
+	if err != nil {
+		fmt.Printf("error with unicode key: ", err)
+	}
 
 	authApp.GET("/dashboard", func(c echo.Context) error {
 		return dashboard.DashboardHandler(c)

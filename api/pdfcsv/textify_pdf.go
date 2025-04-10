@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/unidoc/unipdf/v3/common/license"
 	"github.com/unidoc/unipdf/v3/extractor"
 	"github.com/unidoc/unipdf/v3/model"
 )
@@ -20,14 +19,6 @@ func InternalConvertPdfToText(filename string) error {
 	_, err := os.Open(txt_file_destination)
 	if err == nil {
 		return nil
-	}
-
-	unidoc_key := os.Getenv("UNICODE_SECRET_KEY")
-	fmt.Println("\n\n THE CODE: ", unidoc_key, "\n\n")
-	err = license.SetMeteredKey(unidoc_key)
-	if err != nil {
-		fmt.Printf("error with unicode key: ", err)
-		return err
 	}
 
 	err = extractTextToFile(filePath, txt_file_destination)
