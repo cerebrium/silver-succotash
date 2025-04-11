@@ -129,7 +129,7 @@ func handler(c echo.Context) ([]string, error) {
 
 	csv_list := []string{}
 
-	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,POD,CC,CE,DEX\n"
+	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,POD,CC,CE,DEX,status\n"
 	csv_list = append(csv_list, csv_headers)
 
 	stringified_pdf, err := os.Open(txt_file_destination)
@@ -195,14 +195,16 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 	lor_per := percentMap["lor_val"]
 
 	overall_tiers := []float64{
-		.98 - lor_per, .95 - lor_per, .85 - lor_per, .7 - lor_per, .6 - lor_per,
+		.98, .95, .85, .7, .6,
 	}
 
 	larger_lor_per := lor_per * 100
 
 	overall_rating := []float64{
-		98 - larger_lor_per, 95 - larger_lor_per, 85 - larger_lor_per, 7 - larger_lor_per, 6 - larger_lor_per,
+		98 - larger_lor_per, 95 - larger_lor_per, 85 - larger_lor_per, 70 - larger_lor_per, 60 - larger_lor_per,
 	}
+
+	fmt.Println("\n What are the overall ratings:", overall_rating)
 
 	final_total := 0.00
 	csv_line := ""
@@ -340,42 +342,42 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			continue
 		}
 
-		if idx == 7 {
-			continue
-		}
+		// if idx == 7 {
+		// 	continue
+		// }
 
 		// Lower is better categories
-		if idx == 4 {
-			if floatValue < tier.FanPlus {
-				final_total += per
-				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
-
-				continue
-			}
-			if floatValue < tier.Fan {
-				final_total += per * overall_tiers[1]
-				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
-
-				continue
-			}
-			if floatValue < tier.Great {
-				final_total += per * overall_tiers[2]
-				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
-
-				continue
-			}
-			if floatValue < tier.Fair {
-				final_total += per * overall_tiers[3]
-				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[3], 2) + ","
-
-				continue
-			}
-
-			final_total += per * overall_tiers[4]
-			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[4], 2) + ","
-
-			continue
-		}
+		// if idx == 4 {
+		// 	if floatValue < tier.FanPlus {
+		// 		final_total += per
+		// 		csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
+		//
+		// 		continue
+		// 	}
+		// 	if floatValue < tier.Fan {
+		// 		final_total += per * overall_tiers[1]
+		// 		csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
+		//
+		// 		continue
+		// 	}
+		// 	if floatValue < tier.Great {
+		// 		final_total += per * overall_tiers[2]
+		// 		csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+		//
+		// 		continue
+		// 	}
+		// 	if floatValue < tier.Fair {
+		// 		final_total += per * overall_tiers[3]
+		// 		csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[3], 2) + ","
+		//
+		// 		continue
+		// 	}
+		//
+		// 	final_total += per * overall_tiers[4]
+		// 	csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[4], 2) + ","
+		//
+		// 	continue
+		// }
 
 		if floatValue > tier.FanPlus {
 			final_total += per
