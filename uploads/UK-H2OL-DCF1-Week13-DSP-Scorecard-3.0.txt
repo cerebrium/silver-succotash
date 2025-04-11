@@ -1,0 +1,556 @@
+DSP Delivery Excellence Performance
+
+H2OL at DCF1
+Week 13
+2025
+
+Week 13 Performance
+
+Overall Standing
+
+Fantastic
+
+See details on next page
+
+Key Focus Areas
+
+1. Delivered Not Received (DNR DPMO)
+2. Mentor Adoption Rate
+3. Customer escalation DPMO
+
+Announcements
+
+We are pleased to inform you that metric definitions on page 5 and 6 are now available in country specific language. This can be found in the
+resources table and also in the metric definition section.
+
+We are surfacing a reminder of the interactive metric modules available below, in the resources section. These modules cover Safety, Quality/Standard
+Work Compliance & Customer Feedback / Team.
+
+We have updated the supplementary Concessions report with additional “focus areas” that identify delivery factors that may have contributed to the
+issuance of concessions (Incorrect Scan Indicator, Signature on Delivery , High Value Item, Delivery Exception, Mailbox Eligible). DSPs using the report
+experience a 35% higher reduction in DNR DPMO compared to DSPs with lower adoption rates.
+
+Note: Users can only access the same geography modules, as example, UK can only access these modules via UK/IE links.
+
+Resources
+
+Please click on the the Country code below you operate in. They are hyperlinks to the resource pages.
+
+Scorecard Metric Definitions ES,ES,
+IT
+DE/ AT,DE/ AT,DE/ AT,DE/ AT,
+FR,FR,FR,
+NL,NL,NL,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+BE,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+Metrics Resource Links 
+DVIC Compliance DE/ AT,DE/ AT,DE/ AT,DE/ AT,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,
+BE,
+NL,NL,NL,
+ES,ES,ES,
+FR,FR,FR,
+IT
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO, 
+Vehicle Safety Audit (VSA) UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+ES , FR ,
+DE/ ATDE/ ATDE/ AT NL ,
+BE ,
+IT
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+Mentor Adoption Rate ES ,
+NL
+FR ,
+BE ,
+DE/DE/ AT,AT,AT,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+Speeding Event Rate ES , FR ,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,
+NL
+DE/ AT,DE/ AT,DE/ AT,
+BE ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO, 
+FICO FR ,
+ES ,
+DE/ AT,DE/ AT,DE/ AT,DE/ AT,
+NL
+BE ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+Netradyne UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+	 	 
+Delivery Completion Rate(DCR) ES , FR ,
+IT
+BE ,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, DE/ AT,AT,AT,
+NL ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO, 
+Delivered Not Received(DNR DPMO) BE ,
+DE/DE/ AT,AT,AT,
+ES , FR ,
+IT
+NL ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+POD DE/DE/ AT,AT,AT,
+BE ,
+IT
+FR ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO, NL ,
+ES ,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+Contact Compliance FR ,
+IT
+DE/ AT,AT,AT,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+BE ,
+ES ,
+NL ,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+Preference Honor Rate(PHR) BE,
+NL ,
+DE/DE/ AT,AT,AT,
+ES ,
+IT
+FR ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM, 
+Customer escalation DPMO DE/DE/ AT,AT,AT,
+BE ,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,
+NL ,
+FR ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+IT
+ES , 
+Positive Delivery Experience Rate DE/DE/ AT,AT,AT,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,
+ES , FR ,
+BE ,
+IT
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO, NL , 
+Breach of contract DE/DE/ AT,AT,AT,
+ES , FR ,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,
+BE ,
+IT
+NL ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO, 
+Working hours compliance UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,
+ES ,
+DE/DE/ AT,AT,AT,
+FR ,
+IT
+NL ,
+BE ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO, 
+Comprehensive audit score BE ,
+FR ,
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,
+ES ,
+DE/DE/ AT,AT,AT,
+IT
+NL ,
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO, 
+
+DPR
+
+UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,UK/ IE OSM,
+
+UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,UK/ IE BO,
+
+DE/DE/ AT,AT,AT,
+
+Questions?
+
+- Discuss with your Account Manager
+
+Page 1 of 8
+
+ES ,
+
+FR ,
+
+BE ,
+
+NL ,
+
+IT
+
+
+
+--- Page 1 ---
+
+DSP WEEKLY SCORECARD
+
+H2OL at DCF1
+Week 13 - 2025
+
+Rank at DCF1:
+
+Overall Score:
+
+Compliance and Safety
+
+Safety
+
+Safe Driving Metric (FICO)
+Speeding Event Rate (Per 100 Trips)
+Mentor Adoption Rate
+
+805|Fantastic
+0|Fantastic
+85.51%|Great
+
+3 ( 0 WoW)
+
+90.72 | Fantastic
+
+Fantastic
+
+Compliance
+
+DVIC Compliance
+Vehicle Audit (VSA) Compliance
+Breach of Contract (BOC)
+Working Hours Compliance (WHC)
+Comprehensive Audit Score (CAS)
+
+Quality & SWC:
+
+Customer delivery Experience
+
+Customer escalation DPMO
+Customer Delivery Feedback
+
+21|Great
+88.88%|Fantastic
+
+100%|Fantastic
+100%|Fantastic
+None
+100%|Fantastic
+100%|In Compliance
+
+Fantastic
+
+Quality
+
+Delivery Completion Rate(DCR)
+Delivered Not Received(DNR DPMO)
+Lost on Road (LoR) DPMO
+
+99.3%|Fantastic
+905|Fantastic
+68|Fantastic
+
+Standard Work Compliance
+
+? Photo-On-Delivery
+Contact Compliance
+
+98.81%|Fantastic
+98.89%|Fantastic
+
+Metrics higlighted in red are for visibility only and do not impact final DSP
+Scores/ Tiers
+
+Capacity:
+
+Next Day Capacity Reliability
+
+112.44%|Fantastic
+
+Recommended Focus Areas
+
+1. Delivered Not Received (DNR DPMO)
+2. Mentor Adoption Rate
+3. Customer escalation DPMO
+
+Current Week Tips
+
+Coming Soon
+
+Page 2 of 8
+
+Fantastic
+
+
+
+--- Page 2 ---
+
+CC
+POD
+CE
+DEX - Contact Compliance
+- Photo On Delivery
+- Customer Escalations
+- Positive Delivery Experience Rate
+
+DSP WEEKLY SUMMARY
+
+CE DEX Transporter ID Delivered DCR DNR DPMO POD CC 	 	 
+A11A9ZUOXD3HKT 1327 100% 754 99.39% 100% 0 93.53% 
+A12DX1N0VLE2ZF 415 99.52% 0 88.06% 100% 0 94.74% 
+A137ZOGXTZ9T1E 173 99.43% 0 93.33% 83.33% 0 89.22% 
+A14WRV9A8GC489 477 99.79% 0 98.53% 100% 0 95.93% 
+A15ZO0J45C4NHG 1226 99.84% 816 100% 100% 0 94.72% 
+A1E2GDTQUHVXNF 796 99.5% 2513 98.68% 100% 0 92.03% 
+A1EGWK6LOU2WLB 892 99.22% 1121 100% 88.89% 0 92.91% 
+A1IITZEV3NV89N 1040 99.43% 2885 97.26% 100% 0 82% 
+A1O32YWMWQARGU 918 99.24% 0 100% 100% 1 95.44% 
+A1P3ZN7CM3Y50X 1192 99.83% 839 100% 100% 0 90.1% 
+A1PBO81VXPLBO 747 99.2% 1339 100% 95.45% 0 84.94% 
+A1RAG4OKSSP976 1224 100% 1634 100% 100% 0 83.69% 
+A1T3VIRARI8DBT 907 99.45% 1103 100% 93.55% 0 95.09% 
+A1UAZKDWSGGRD5 901 100% 0 100% 99.72% 0 87.41% 
+A1UYFFJ01RTFJG 675 100% 0 91.67% 99.67% 0 83.97% 
+A1V4PBJ2L605VO 505 99.02% 1980 98.61% 100% 0 97.04% 
+A1X1X2BTCJIMTL 341 99.13% 0 92.59% 100% 0 86.92% 
+A2089EA5QSETU4 1004 99.8% 0 99.36% 100% 0 88.82% 
+A20IR6H0OQT8CF 732 98.39% 0 93.88% 97.03% 0 80.06% 
+A230NJEC4V1YH0 482 100% 0 100% 75% 0 95.94% 
+A27ISPJ60MOG8Q 897 99.23% 0 100% 100% 0 91.03% 
+A27J6JHEI6J6TK 209 100% 0 100% 100% 0 100% 
+A28O6DLUC55SWD 1 100% 0 - - 0 - 
+A2E7LGPCUH8V91 1193 99.33% 0 99.45% 100% 0 98.17% 
+A2FCULV7P322W7 1300 98.86% 769 100% 85% 0 90.4% 
+A2GGI8JRWMF1S8 439 98.43% 0 100% 100% 0 90.57% 
+A2KDV3C8VLDTRV 410 100% 2439 100% - 0 86.91% 
+A2MNTCGO1WW2HI 928 98.93% 3233 98.7% 100% 0 84.42% 
+A2MYL9XUKAFICF 1112 99.73% 0 100% 100% 0 92.6% 
+A2OK9PMIFS7III 1158 96.58% 0 100% 91.3% 0 88.7% 
+A2Q1KVCSIDW4AZ 1073 100% 0 99.14% 100% 0 80.51% 
+A2QY6KNBKLPNXH 549 98.92% 0 98.9% 100% 0 86.77% 
+A2V4KSOMLHTT5Z 1159 99.4% 863 100% 100% 0 87.5% 
+A2Z8MYDDJ9J2EP 897 99.45% 0 100% 97.22% 0 89.27% 
+A2ZD0BX89B68QC 881 99.21% 0 100% 100% 0 97.8% 
+A2ZFOT759R1DQY 938 99.36% 1066 100% - 0 88.11% 
+A2ZG3ZK5P85TAT 1225 98.87% 0 100% 100% 0 93.08% 
+A2ZNPEKRHJ3IM4 244 100% 0 100% 100% 0 100% 
+A31A1LM4WRQXHE 1130 99.56% 0 98.54% 80% 0 80.83% 
+A31KOOZONR3CT4 1050 99.62% 0 99.43% 66.67% 0 95.93% 
+A340D2SXB98B76 1101 99.28% 908 98.36% 100% 0 86.26% 
+A383I86ET7P69H 226 99.56% 0 100% 100% 0 91.78% 
+A3B7YTRFJPV57F 932 99.47% 0 97.54% 100% 0 88.26% 
+A3BXIR8QMK5GJ3 408 100% 0 94.34% 100% 0 84.53% 
+A3ECCWJXATL20O 833 99.64% 1200 93.55% 95% 0 94.13% 
+A3ECX7BOP0W6EA 634 99.22% 1577 100% 100% 0 72.25% 
+
+Page 3 of 8
+
+
+
+--- Page 3 ---
+
+A3G5B1U3QL5A4F 962 99.59% 2079 100% 100% 0 81.2% 
+A3IPYEBSD26F5Z 1306 99.77% 0 99.08% 100% 0 91.32% 
+A3PC8LSXFCQRMS 1238 99.68% 0 94.87% 100% 0 90.19% 
+A3PGS443TQ4NAJ 697 99.29% 0 97.56% 100% 0 94.07% 
+A3QK8SGBO6B12H 893 98.67% 0 98.8% 100% 0 92.61% 
+A3R9VPN5LS32SY 1046 99.52% 956 99.08% 91.67% 0 92.14% 
+A3RQ8347NYE8GP 824 96.15% 0 91.78% 100% 0 89.76% 
+A3TS150T39I4YN 892 99.89% 1121 100% 100% 0 91.81% 
+A3VERKBB66ZO7I 32 91.43% 0 100% 100% 0 100% 
+A7FME9BOQ1DRF 822 99.4% 10949 97.47% 100% 0 79.97% 
+A7Q3FDOK6XKFO 972 99.69% 1029 100% 100% 0 79.72% 
+AAB83UC010F1G 1337 99.78% 1496 100% 100% 0 94.34% 
+ACLSBY7P3SKWW 1133 99.56% 3530 100% 100% 0 77.74% 
+ACVVCU8AQQQ4M 842 96.34% 1188 98.56% 87.5% 0 94.31% 
+AGJMANVG0XVKG 1426 99.3% 701 99.56% 70% 0 81.96% 
+AGNQEZKETS2BF 1268 98.6% 1577 99.3% 100% 0 89.69% 
+ANLR94YRQBDML 1098 99.55% 0 96.4% 100% 0 92.39% 
+APVI8HZ7ZMOXI 958 99.07% 1044 99.12% 96% 0 84.52% 
+AT3V6HZTXANFD 662 98.81% 0 100% 100% 0 96.21% 
+AUKLDB6Q9ENN8 1034 99.52% 1934 96.83% 100% 0 80.37% 
+AUZL4RK2F8WG 1037 99.62% 0 100% 100% 0 97.96% 
+AY26VSH24F0AR 507 99.22% 1972 100% 100% 0 86.3% 
+AYDSF7S17AK7A 691 99.71% 1447 100% 100% 0 79.19% 
+
+Page 4 of 8
+
+
+
+--- Page 4 ---
+
+Drivers With Working Hour Exceptions
+
+*Blank Sheet means no exceptions
+
+# Transporter ID Daily Limit Exceeded Weekly Limit Exceeded Under Offwork Limit
+
+Page 5 of 8
+
+Work Day Limit Exceeded WH Exception
+
+
+
+--- Page 5 ---
+
+Performance Standards and Service Levels
+
+Per Work order, your company’s performance will be measured across the following SLS metrics, and your company will be expected to
+meet the SLS targets included on this page. Below presents the target and minimum service level per metric. If you repeatedly* fall below
+the Minimum Service Levels (presented below), it can result in a reduction of volume allocated to your company, or termination of your
+company’s Work order
+
+* Definition of Repeatedly = falling below the minimum requirement in 2 consecutive instances (weekly scorecards) below minimum
+requirement
+
+* Metrics and the associated targets are subject to change. We reserve the right to make amendments with notice in writing including via
+email, 8 weeks prior to change.
+
+Operational SLS Metrics Target Minimum 
+Scorecard Performance 85 50 
+Vehicle Audit Compliance (VSA) 100% 97% 
+Safe Driving (FICO) 800 730 
+DVIC Compliance 100% 97% 
+Speeding Event Rate (per 100 trips) 5 20 
+Customer Escalation DPMO 0.02 130 
+Customer Delivery Feedback 82.5 76.9 
+Route Reliability 100% 85% 
+Delivery Completion Rate (DCR) 99% 98% 
+Delivered Not Received (DNR DPMO) 1160 1800 
+Photo On Delivery 98.5% 97% 
+Contact Compliance 98% 90% 
+
+
+
+--- Page 6 ---
+
+Metric Definitions� � � � � � � �
+
+(Click on the country you operate in)
+
+UK/ IE,UK/ IE,UK/ IE,
+
+DE/ AT,DE/ AT,DE/ AT,DE/ AT,
+
+ES,ES,ES,
+
+FR,FR,
+
+BE,BE,
+
+NL,NL,
+
+IT
+
+Safety
+
+Includes metrics such as Vehicle Audit (VSA) Compliance, Safe Driving Metric, Seatbelt off Rate (only for UK DSP 2.0s), Speeding event Rate, Daily Vehicle Inspection Check
+Compliance and E-Mentor Adoption Rate. (See Below for more details)
+
+Vehicle Audit (VSA) Compliance
+Vehicle Audit (VSA) Compliance is calculated as the DVIC Checks verified by Amazon over last two weeks. We calculate this metric as the count of vehicles that have passed
+Amazon’s VSA check against the total number of vehicles audited during WK-2 and WK-1. Vehicle Audit (VSA) Compliance calculation: Total VSA Passed Audits (WK-2 & WK-1) /
+Total VSA Audits (WK-2 & WK-1). A DSP who has Fantastic standing would receive a >=100% in VSA.
+
+Safe Driving Metric (FICO)�
+This metric is calculated using the eDriving Mentor FICO score, which is a composite potential indicator of a driver’s safe driving behaviour. The metric is measured by analysing
+indicators of how your drivers operate their vehicles, such as Harsh Acceleration, Braking, Cornering, Cell phone Distraction and Speeding. The metric is a weighted average of all
+driver’s eDriving Mentor FICO scores at the end of the week on a 100 – 850 scale where a higher score is better. A DSP who has Fantastic standing would receive a >=800 in FICO.
+
+Speeding Event Rate
+
+The Speeding Event Rate metric is the average number of speeding instances incurred by a DA per route. A speeding instance is counted as exceeding the speed limit by 20% or
+more for at least 60 seconds. A DSP who has Fantastic standing would receive a <= 5% speeding events per 100 trips.
+
+DVIC Compliance
+The Daily Vehicle Inspection Check (DVIC) allows you to stay up-to-date on the condition of the vehicles, thus ensuring vehicles are safe for its drivers and the community. Drivers are
+required to perform pre trip DVIC before they are able to pick up route, and a post trip after completion of route (DVIC compliance). The metric is calculated as The rate of vehicles
+inspected after the return to stations out of all the 'Inspected Vehicles' (before getting on road, hence pre-trip). Note: cargo bikes and walking routes are excluded from metric
+calculations. A DSP who has Fantastic standing would receive a >=100% in DVIC.
+
+E-Mentor Adoption Rate�
+
+The E-Mentor Adoption Rate allows you to understand what percent of your drivers are using Mentor App on a weekly basis. This metric is calculated by number of active drivers on
+the Mentor app divided by total active drivers for the particular week. If your drivers have low adoption rates, your other safety metrics might be impacted, resulting in overall lower
+score. We encourage DSPs to increase eMentor app adoption rate with the drivers to help support improved driver behaviour. A DSP who has Fantastic standing would receive a >=
+90% in EMentor Adoption Rate.
+
+Compliance
+
+We regularly audit for compliance to ensure DSP’s business operations adhere to Amazon supply chain standards and program policy.
+
+Comprehensive Audit Score
+The Comprehensive Audit is a measurement of DSP/Driver Eligibility, DSP Operations, Safety, Wages & Benefits, DSP Management, and Working Hours (all measurements outlined
+in the DSP Program Agreements and Policies). The results of the Comprehensive Audit provide a baseline for a DSP’s state of compliance. Compliance is critical to ensuring a good
+working environment for you and your drivers and meeting our compliance standards is required. You must earn an 'In Compliance' on your Comprehensive Audit to be eligible for
+scorecard evaluation and not be in Breach of Contract (BOC). A DSP who has Fantastic standing would receive a 100% in CAS.
+
+Working Hour Compliance (WHC)
+WHC metric is based on a DSP's continuous compliance with working hour requirements as established by Amazon Supply Chain Standards, Amazon Logistics business policy, and
+prevailing local law. This includes compliance with: Daily and weekly working hour thresholds; Maximum permissible consecutive workdays; and Minimum required rest between
+shifts. The metric is calculated as % of drivers complying with working hour limits. A DSP who has Fantastic standing would receive a 100% in WHC.
+
+Delivery Quality
+
+Includes metrics: Delivery Completion Rate, Delivered not Received DPMO and SWA On-time Arrival (DSPs within the SWA program)
+
+Delivery Completion Rate�
+The share of packages dispatched to the drivers which are delivered to the customer (and not returned to the station). Thresholds are set at the station level to account for regional
+differences. A DSP who has Fantastic standing would receive a >= 99% in DCR.
+
+Delivered Not Received DPMO�
+The number of packages delivered but not received by customer, on per million opportunities / delivered (DPMO) basis. Thresholds are set at the station level to account for regional
+differences. A DSP who has Fantastic standing would receive a <= 1160 in DNR DPMO.
+
+Lost on Road (LoR) DPMO
+The number of packages dispatched to the drivers but not delivered to the customer (and not returned to the station), on per million opportunities / dispatched (DPMO) basis. A DSP
+who has Fantastic standing would receive a <=215 LoR DPMO.
+
+Page 7 of 8
+
+
+
+--- Page 7 ---
+
+Standard Work Compliance
+
+Includes metrics on Photo on Delivery, Contact Compliance and SWA Scan Compliance (only applicable for DSPs within the SWA program)
+
+Photo on Delivery
+
+The number of usable (i.e. presentable to the customer) POD (Photo-on-delivery) photos taken, divided by total POD opportunities. A DSP who has Fantastic standing would receive
+a >=98.5% in Photo on Delivery.
+
+Contact Compliance
+The metric is calculated as the count of all calls and texts that were made by a driver through the Amazon Flex app vs the total packages delivered with a call or text, as well as
+packages not delivered due to reasons such as Unable to Access (UTA), Unable to Locate (UTL), No Safe Locations (NSL). A DSP who has Fantastic standing would receive a 98%
+in Contact Compliance.
+
+Customer Feedback
+
+Includes Positive Delivery Experience (DEX) and Customer Escalations DPMO. If you don't yet have a DEX score, we will consider DEX score based on your Customer Escalations
+DPMO.
+
+Customer Delivery Feedback
+CDF metric is a measurement of the customer feedback received after packages are delivered by the Delivery Associates (DAs). The metric is a weighted ratio that accounts for
+positive, negative, and no feedback. A DSP who has Fantastic standing would receive a >= 82.5% in CDF.
+
+Customer Escalations DPMO
+Customer Escalations DPMO: The frequency at which drivers incur customer escalations, on a per-million opportunities (DPMO) basis. Violations are triple-weighted, and Defects are
+single weighted. Only successfully resolved tickets with customer escalations are counted with a 4-week delay. For example, Week 45 Scorecard Escalation Defect DPMO is
+calculated by counting and weighting the feedback incurred by drivers in Week 41 and not overturned by appeals. A DSP who has Fantastic standing would receive a 0 in Customer
+Escalations DPMO.
+
+Capacity
+
+Includes Capacity Reliability
+
+Capacity Reliability
+
+Capacity Reliability compares your completed routes per day (excluding any Amazon caused cancellations) from Work Summary Tool to your day-level Reliability Targets from Route
+Targets (Okami) with an exception; if your final day-before scheduled plan comes in lower due to Amazon caused cancellations, those cancelled routes will be subtracted from your
+Reliability Target.
+
+Page 8 of 8
+
+
+
+--- Page 8 ---
+

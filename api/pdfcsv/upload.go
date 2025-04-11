@@ -129,7 +129,7 @@ func handler(c echo.Context) ([]string, error) {
 
 	csv_list := []string{}
 
-	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,LoR DPMO,POD,CC,CE,DEX\n"
+	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,POD,CC,CE,DEX\n"
 	csv_list = append(csv_list, csv_headers)
 
 	stringified_pdf, err := os.Open(txt_file_destination)
@@ -192,19 +192,23 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 		*
 	*/
 
+	lor_per := percentMap["lor_val"]
+
 	overall_tiers := []float64{
-		.98, .95, .85, .7, .6,
+		.98 - lor_per, .95 - lor_per, .85 - lor_per, .7 - lor_per, .6 - lor_per,
 	}
 
+	larger_lor_per := lor_per * 100
+
 	overall_rating := []float64{
-		98, 95, 85, 7, 6,
+		98 - larger_lor_per, 95 - larger_lor_per, 85 - larger_lor_per, 7 - larger_lor_per, 6 - larger_lor_per,
 	}
 
 	final_total := 0.00
 	csv_line := ""
 
 	for idx, val := range strings.Split(line, " ") {
-		if idx > 8 {
+		if idx > 7 {
 
 			if final_total > overall_rating[0] {
 				csv_line += "" + roundFloat(final_total, 2) + " | " + "fantastic plus\n"
@@ -292,23 +296,23 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			final_total += per * overall_tiers[4]
 			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[4], 2) + ","
 			continue
+		// case 4:
+		//
+		// 	// LoRDPMO
+		// 	per = percentMap["lor_val"] * 100
+		// 	tier = tierMap["Lor"]
+
 		case 4:
-
-			// LoRDPMO
-			per = percentMap["lor_val"] * 100
-			tier = tierMap["Lor"]
-
-		case 5:
 			// POD
 			per = percentMap["pod_val"] * 100
 			tier = tierMap["Pod"]
 
-		case 6:
+		case 5:
 			// CC
 			per = percentMap["cc_val"] * 100
 			tier = tierMap["Cc"]
 
-		case 7:
+		case 6:
 			// CE
 			per = percentMap["ce_val"] * 100
 
@@ -327,7 +331,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			final_total += per
 
 			continue
-		case 8:
+		case 7:
 			// DEX
 			per = percentMap["dex_val"] * 100
 			tier = tierMap["Dex"]
