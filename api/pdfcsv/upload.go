@@ -290,7 +290,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			}
 
 			final_total += per * overall_tiers[4]
-			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[4], 2) + ","
 			continue
 		case 4:
 
@@ -341,27 +341,29 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 		}
 
 		// Lower is better categories
-		if idx == 4 || idx == 7 {
+		if idx == 4 {
 			if floatValue < tier.FanPlus {
 				final_total += per
-
 				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
+
 				continue
 			}
 			if floatValue < tier.Fan {
 				final_total += per * overall_tiers[1]
-
 				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
+
 				continue
 			}
 			if floatValue < tier.Great {
 				final_total += per * overall_tiers[2]
 				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+
 				continue
 			}
 			if floatValue < tier.Fair {
 				final_total += per * overall_tiers[3]
 				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[3], 2) + ","
+
 				continue
 			}
 
@@ -373,24 +375,26 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 
 		if floatValue > tier.FanPlus {
 			final_total += per
-
 			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","
+
 			continue
 		}
 		if floatValue > tier.Fan {
 			final_total += per * overall_tiers[1]
-
 			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[1], 2) + ","
+
 			continue
 		}
 		if floatValue > tier.Great {
 			final_total += per * overall_tiers[2]
 			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[2], 2) + ","
+
 			continue
 		}
 		if floatValue > tier.Fair {
 			final_total += per * overall_tiers[3]
 			csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per*overall_tiers[3], 2) + ","
+
 			continue
 		}
 
