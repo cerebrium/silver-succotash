@@ -1,7 +1,6 @@
 package tiers_routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -18,8 +17,6 @@ func ReadTiers(c echo.Context) error {
 			"error": "could not resolve cc",
 		})
 	}
-
-	fmt.Println("\n\n\n INSIDE THE READ Tiers")
 
 	tiers, err := tiers.ReadTiers(cc.Db)
 	if err != nil {
