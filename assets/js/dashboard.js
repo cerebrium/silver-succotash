@@ -362,9 +362,6 @@ class UploadFile {
     this.tier_dropdown.classList.add("hidden");
 
     return;
-
-    this.tiers_form.style.display = "none";
-    this.form_container.style.display = "none";
   }
   /**
    *
