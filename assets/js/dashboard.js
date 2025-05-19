@@ -325,50 +325,43 @@ class UploadFile {
    */
 
   async toggle_tier_form(e) {
-    this.is_displaying_tier_form = !this.is_displaying_tier_form;
-
-    if (this.is_displaying_tier_form) {
-      if (!e.target.id) {
-        throw new Error("there is no id!");
-      }
-
-      this.current_tier = e.target.id;
-
-      const tier_data = await this.get_tier_data();
-      const j_tier_data = await tier_data.json();
-
-      let data_to_populate = null;
-      for (const vals of j_tier_data) {
-        if (vals.name.toLowerCase() === e.target.id.toLowerCase()) {
-          data_to_populate = vals;
-        }
-      }
-
-      const inputs = this.tiers_form.querySelectorAll("input");
-      for (const el of inputs) {
-        switch (el.id) {
-          case "fantastic": {
-            el.value = data_to_populate["fan"];
-            continue;
-          }
-          case "fantastic_plus": {
-            el.value = data_to_populate["fan_plus"];
-            continue;
-          }
-          default:
-            el.value = data_to_populate[el.id];
-        }
-      }
-
-      this.form_container.style.display = "flex";
-      this.tiers_form.style.display = "block";
-      this.tier_dropdown.classList.add("hidden");
-
-      return;
+    if (!e.target.id) {
+      throw new Error("there is no id!");
     }
 
-    this.tiers_form.style.display = "none";
-    this.form_container.style.display = "none";
+    this.current_tier = e.target.id;
+
+    const tier_data = await this.get_tier_data();
+    const j_tier_data = await tier_data.json();
+
+    let data_to_populate = null;
+    for (const vals of j_tier_data) {
+      if (vals.name.toLowerCase() === e.target.id.toLowerCase()) {
+        data_to_populate = vals;
+      }
+    }
+
+    const inputs = this.tiers_form.querySelectorAll("input");
+    for (const el of inputs) {
+      switch (el.id) {
+        case "fantastic": {
+          el.value = data_to_populate["fan"];
+          continue;
+        }
+        case "fantastic_plus": {
+          el.value = data_to_populate["fan_plus"];
+          continue;
+        }
+        default:
+          el.value = data_to_populate[el.id];
+      }
+    }
+
+    this.form_container.style.display = "flex";
+    this.tiers_form.style.display = "block";
+    this.tier_dropdown.classList.add("hidden");
+
+    return;
   }
   /**
    *
