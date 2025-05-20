@@ -38,7 +38,7 @@ func UploadHandler(c echo.Context) error {
 }
 
 func handler(c echo.Context) ([]string, error) {
-	cc, ok := c.(*localware.LocalUserClerkDbContext)
+	cc, ok := c.(*localware.DbContext)
 	if !ok {
 		c.Logger().Error("could not resolve cc")
 	}
@@ -47,6 +47,8 @@ func handler(c echo.Context) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println("incoming: ", cc.Db)
 
 	// Open the file
 	file, err := fileHeader.Open()
@@ -91,6 +93,7 @@ func handler(c echo.Context) ([]string, error) {
 	}
 
 	trimmed_file_name := strings.TrimSpace(fileHeader.Filename)
+	var not_found string
 
 	var station_val stations.Station
 	found := false
@@ -98,11 +101,13 @@ func handler(c echo.Context) ([]string, error) {
 		if strings.Contains(trimmed_file_name, stat.Station) {
 			found = true
 			station_val = stat
+		} else {
+			not_found = stat.Station
 		}
 	}
 
 	if !found {
-		err := errors.New("could not find station")
+		err := errors.New("could not find station: " + trimmed_file_name + "\n looking for: " + not_found)
 		c.Logger().Error("could not find station")
 		return nil, err
 	}

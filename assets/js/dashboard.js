@@ -594,6 +594,7 @@ class UploadFile {
     let current_domain = window.location.href;
 
     current_domain = current_domain.replace("dashboard", "api");
+    current_domain = current_domain.replace("/v1", "");
 
     const form_data = new FormData();
     form_data.append("file", file);

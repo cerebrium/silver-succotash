@@ -75,6 +75,9 @@ func main() {
 	// Serve the htmx and other assets
 	app.Static("/assets", "assets")
 
+	unidoc_key := os.Getenv("UNICODE_SECRET_KEY")
+	fmt.Println("\n\n THE CODE: ", unidoc_key, "\n\n")
+
 	// All attempts at routes that aren't
 	// mounted at /v1 should take you to
 	// the auth page. If Authenticated, it
@@ -84,14 +87,16 @@ func main() {
 		return index.IndexHandler(c)
 	})
 
+	app.POST("/api/pdf_upload", func(c echo.Context) error {
+		return pdfcsv.UploadHandler(c)
+	})
+
 	// All routes mounted at /v1/* are authenticated users
 	authApp := app.Group("/v1", localware.WithHeaderAuthorizationMiddleware)
 
 	// Add user struct to context
 	authApp.Use(localware.AddLocalUser)
 
-	unidoc_key := os.Getenv("UNICODE_SECRET_KEY")
-	fmt.Println("\n\n THE CODE: ", unidoc_key, "\n\n")
 	err = license.SetMeteredKey(unidoc_key)
 	if err != nil {
 		fmt.Printf("error with unicode key: ", err)
@@ -99,10 +104,6 @@ func main() {
 
 	authApp.GET("/dashboard", func(c echo.Context) error {
 		return dashboard.DashboardHandler(c)
-	})
-
-	authApp.POST("/api/pdf_upload", func(c echo.Context) error {
-		return pdfcsv.UploadHandler(c)
 	})
 
 	authApp.GET("/api/station", func(c echo.Context) error {
