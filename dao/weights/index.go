@@ -9,4 +9,6 @@ type Weights struct {
 	Pod     float64 `json:"pod"`
 	Cc      float64 `json:"cc"`
 	Dex     float64 `json:"dex"`
+	CdfDpmo float64 `json:"cdf_dpmo"`
+	Psb     float64 `json:"psb"`
 }

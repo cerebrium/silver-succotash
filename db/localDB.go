@@ -16,8 +16,12 @@ func WriteLocalDb(db *sql.DB) {
 	// WEIGHTS
 	CreateWeights(db)
 	AddLorColumnIfNotExists(db)
+	AddCdfDpmoColumnIfNotExists(db)
+	AddPsbColumnIfNotExists(db)
 	PopulateWeights(db)
 	PopulateLor(db)
+	PopulateCdfDpmo(db)
+	PopulatePsb(db)
 
 	// DropStation(db)
 
@@ -60,7 +64,7 @@ func CreateTiers(db *sql.DB) {
 }
 
 func populateTiers(db *sql.DB) {
-	columns := []string{"Dcr", "DnrDpmo", "Ce", "Pod", "Cc", "Dex", "Lor"}
+	columns := []string{"Dcr", "DnrDpmo", "Ce", "Pod", "Cc", "Dex", "Lor", "CdfDpmo", "Psb"}
 
 	query_str := `INSERT INTO tiers (name, FanPlus, Fan, Great, Fair) VALUES (?, ?, ?, ?, ?)`
 	for _, name := range columns {
@@ -231,4 +235,118 @@ func PopulateStations(db *sql.DB) {
 			log.Fatal("could not insert into db the station: ", err)
 		}
 	}
+}
+
+func AddCdfDpmoColumnIfNotExists(db *sql.DB) {
+	rows, err := db.Query("PRAGMA table_info(weights)")
+	if err != nil {
+		fmt.Println("Error querying table info:", err)
+		return
+	}
+	defer rows.Close()
+
+	columnExists := false
+	for rows.Next() {
+		var cid int
+		var name string
+		var typeStr string
+		var notnull int
+		var dfltValue *string
+		var pk int
+
+		if err := rows.Scan(&cid, &name, &typeStr, &notnull, &dfltValue, &pk); err != nil {
+			fmt.Println("Error scanning table info row:", err)
+			return
+		}
+		if name == "CdfDpmo" {
+			columnExists = true
+			break
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Println("Error iterating through table info:", err)
+		return
+	}
+
+	if !columnExists {
+		_, err := db.Exec(
+			`ALTER TABLE weights
+			ADD COLUMN CdfDpmo REAL;`)
+		if err != nil {
+			fmt.Println("\n\n\n error adding column 'CdfDpmo': %s", err)
+		} else {
+			fmt.Println("Column 'CdfDpmo' added successfully.")
+		}
+	} else {
+		fmt.Println("Column 'CdfDpmo' already exists.")
+	}
+}
+
+func AddPsbColumnIfNotExists(db *sql.DB) {
+	rows, err := db.Query("PRAGMA table_info(weights)")
+	if err != nil {
+		fmt.Println("Error querying table info:", err)
+		return
+	}
+	defer rows.Close()
+
+	columnExists := false
+	for rows.Next() {
+		var cid int
+		var name string
+		var typeStr string
+		var notnull int
+		var dfltValue *string
+		var pk int
+
+		if err := rows.Scan(&cid, &name, &typeStr, &notnull, &dfltValue, &pk); err != nil {
+			fmt.Println("Error scanning table info row:", err)
+			return
+		}
+		if name == "Psb" {
+			columnExists = true
+			break
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Println("Error iterating through table info:", err)
+		return
+	}
+
+	if !columnExists {
+		_, err := db.Exec(
+			`ALTER TABLE weights
+			ADD COLUMN Psb REAL;`)
+		if err != nil {
+			fmt.Println("\n\n\n error adding column 'Psb': %s", err)
+		} else {
+			fmt.Println("Column 'Psb' added successfully.")
+		}
+	} else {
+		fmt.Println("Column 'Psb' already exists.")
+	}
+}
+
+func PopulateCdfDpmo(db *sql.DB) error {
+	insertDefaultQuery := `
+		UPDATE weights set CdfDpmo=0.0 where ID=1`
+	_, err := db.Exec(insertDefaultQuery)
+	if err != nil {
+		log.Fatal("Failed to insert default CdfDpmo values:", err)
+		return err
+	}
+	return nil
+}
+
+func PopulatePsb(db *sql.DB) error {
+	insertDefaultQuery := `
+		UPDATE weights set Psb=0.0 where ID=1`
+	_, err := db.Exec(insertDefaultQuery)
+	if err != nil {
+		log.Fatal("Failed to insert default Psb values:", err)
+		return err
+	}
+	return nil
 }

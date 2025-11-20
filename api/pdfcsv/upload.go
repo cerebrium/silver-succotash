@@ -131,10 +131,12 @@ func handler(c echo.Context) ([]string, error) {
 	percentMap["cc_val"] = updated_weights.Cc
 	percentMap["dex_val"] = updated_weights.Dex
 	percentMap["lor_val"] = updated_weights.Lor
+	percentMap["cdf_dpmo_val"] = updated_weights.CdfDpmo
+	percentMap["psb_val"] = updated_weights.Psb
 
 	csv_list := []string{}
 
-	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,LoR DPMO,POD,CC,CE,CDF\n"
+	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,LoR DPMO,POD,CC,CE,CDF,CDF DPMO,PSB\n"
 	csv_list = append(csv_list, csv_headers)
 
 	stringified_pdf, err := os.Open(txt_file_destination)
@@ -209,7 +211,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 	csv_line := ""
 
 	for idx, val := range strings.Split(line, " ") {
-		if idx > 8 {
+		if idx > 10 {
 
 			if final_total > overall_rating[0] {
 				csv_line += "" + roundFloat(final_total, 2) + " | " + "fantastic plus\n"
@@ -337,11 +339,39 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			per = percentMap["dex_val"] * 100
 			tier = tierMap["Dex"]
 
+		case 9:
+			// CDF DPMO
+			per = percentMap["cdf_dpmo_val"] * 100
+			tier = tierMap["CdfDpmo"]
+
+			// If weight is 0, just add the raw value to CSV but don't affect final total
+			if per == 0 {
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + "0.00,"
+				continue
+			}
+
+		case 10:
+			// PSB
+			per = percentMap["psb_val"] * 100
+			tier = tierMap["Psb"]
+
+			// If weight is 0, just add the raw value to CSV but don't affect final total
+			if per == 0 {
+				csv_line += "" + roundFloat(floatValue, 2) + " | " + "0.00,"
+				continue
+			}
+
 		default:
 			continue
 		}
 
 		if idx == 7 {
+			continue
+		}
+
+		// Skip tier evaluation if weight is 0 (for new columns with 0 weight)
+		if per == 0 {
+			csv_line += "" + roundFloat(floatValue, 2) + " | " + "0.00,"
 			continue
 		}
 

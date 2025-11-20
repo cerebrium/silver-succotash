@@ -8,10 +8,10 @@ import (
 func (w Weights) Update(db *sql.DB) error {
 	query := `
 		UPDATE weights 
-		SET dcr = ?, dnrDpmo = ?, ce = ?, pod = ?, cc = ?, dex = ?, lor = ?
+		SET dcr = ?, dnrDpmo = ?, ce = ?, pod = ?, cc = ?, dex = ?, lor = ?, CdfDpmo = ?, Psb = ?
 		WHERE ID = ?;
 	`
-	result, err := db.Exec(query, w.Dcr, w.DnrDpmo, w.Ce, w.Pod, w.Cc, w.Dex, w.Lor, w.ID)
+	result, err := db.Exec(query, w.Dcr, w.DnrDpmo, w.Ce, w.Pod, w.Cc, w.Dex, w.Lor, w.CdfDpmo, w.Psb, w.ID)
 	if err != nil {
 		return fmt.Errorf("failed to update weights: %w", err)
 	}
