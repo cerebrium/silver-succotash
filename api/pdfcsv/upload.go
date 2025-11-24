@@ -136,7 +136,7 @@ func handler(c echo.Context) ([]string, error) {
 
 	csv_list := []string{}
 
-	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,LoR DPMO,POD,CC,CE,CDF,CDF DPMO,PSB\n"
+	csv_headers := "Transporter ID,Delivered,DCR,DNR DPMO,LoR DPMO,POD,CC,CE,CDF DPMO,PSB\n"
 	csv_list = append(csv_list, csv_headers)
 
 	stringified_pdf, err := os.Open(txt_file_destination)
@@ -211,7 +211,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 	csv_line := ""
 
 	for idx, val := range strings.Split(line, " ") {
-		if idx > 10 {
+		if idx > 9 {
 
 			if final_total > overall_rating[0] {
 				csv_line += "" + roundFloat(final_total, 2) + " | " + "fantastic plus\n"
@@ -244,7 +244,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 		}
 
 		if parsed_val == "-" {
-			if idx == 3 || idx == 4 || idx == 7 {
+			if idx == 3 || idx == 4 || idx == 7 || idx == 8 || idx == 9 {
 				parsed_val = "0.00"
 			} else {
 				parsed_val = "100.00"
@@ -335,11 +335,6 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 
 			continue
 		case 8:
-			// DEX
-			per = percentMap["dex_val"] * 100
-			tier = tierMap["Dex"]
-
-		case 9:
 			// CDF DPMO
 			per = percentMap["cdf_dpmo_val"] * 100
 			tier = tierMap["CdfDpmo"]
@@ -350,7 +345,7 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 				continue
 			}
 
-		case 10:
+		case 9:
 			// PSB
 			per = percentMap["psb_val"] * 100
 			tier = tierMap["Psb"]
@@ -375,8 +370,8 @@ func writeStatus(line string, percentMap PercentMap, station stations.Station, c
 			continue
 		}
 
-		// Lower is better categories
-		if idx == 4 {
+		// Lower is better categories (LoR DPMO, CDF DPMO, PSB)
+		if idx == 4 || idx == 8 || idx == 9 {
 			if floatValue < tier.FanPlus {
 				final_total += per
 				csv_line += "" + roundFloat(floatValue, 2) + " | " + roundFloat(per, 2) + ","

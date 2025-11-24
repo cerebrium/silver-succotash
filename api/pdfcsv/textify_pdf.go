@@ -6,9 +6,25 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/joho/godotenv"
+	"github.com/unidoc/unipdf/v3/common/license"
 	"github.com/unidoc/unipdf/v3/extractor"
 	"github.com/unidoc/unipdf/v3/model"
 )
+
+func init() {
+	// Load .env file
+	godotenv.Load()
+
+	// Set unipdf license
+	licenseKey := os.Getenv("UNICODE_SECRET_KEY")
+	if licenseKey != "" {
+		err := license.SetMeteredKey(licenseKey)
+		if err != nil {
+			fmt.Printf("Error setting unipdf license: %v\n", err)
+		}
+	}
+}
 
 func InternalConvertPdfToText(filename string) error {
 	filePath := filepath.Join("./uploads", filename)
