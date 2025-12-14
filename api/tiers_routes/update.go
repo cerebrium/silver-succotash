@@ -23,7 +23,7 @@ func UpdateTiers(c echo.Context) error {
 
 	err := cc.Bind(&inc_tiers)
 	if err != nil {
-		cc.Logger().Errorf("could not bind the request: ", err)
+		cc.Logger().Errorf("could not bind the request: %v", err)
 		return cc.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not bind the request",
 		})
@@ -33,7 +33,7 @@ func UpdateTiers(c echo.Context) error {
 
 	err = tiers.UpdateTiers(cc.Db, inc_tiers)
 	if err != nil {
-		cc.Logger().Errorf("Could not update tiers: ", err)
+		cc.Logger().Errorf("Could not update tiers: %v", err)
 		return cc.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not bind the request",
 		})
@@ -42,7 +42,7 @@ func UpdateTiers(c echo.Context) error {
 	// Retrieve the updated val
 	updatedTiers, err := tiers.ReadTiers(cc.Db)
 	if err != nil {
-		c.Logger().Errorf("could not read tiers in the update: ", err)
+		c.Logger().Errorf("could not read tiers in the update: %v", err)
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not read the weights in the update",
 		})

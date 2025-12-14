@@ -23,7 +23,7 @@ func UpdateWeights(c echo.Context) error {
 
 	err := cc.Bind(&weights)
 	if err != nil {
-		c.Logger().Errorf("could not bind the request: ", err)
+		c.Logger().Errorf("could not bind the request: %v", err)
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not bind the request",
 		})
@@ -33,7 +33,7 @@ func UpdateWeights(c echo.Context) error {
 
 	err = weights.Update(cc.Db)
 	if err != nil {
-		c.Logger().Errorf("could not update the weights: ", err)
+		c.Logger().Errorf("could not update the weights: %v", err)
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not update the weights",
 		})
@@ -42,7 +42,7 @@ func UpdateWeights(c echo.Context) error {
 	// Retrieve the updated val
 	updated_weights, err := weights.Read(cc.Db)
 	if err != nil {
-		c.Logger().Errorf("could not read the weights in the update: ", err)
+		c.Logger().Errorf("could not read the weights in the update: %v", err)
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not read the weights in the update",
 		})

@@ -76,7 +76,6 @@ func main() {
 	app.Static("/assets", "assets")
 
 	unidoc_key := os.Getenv("UNICODE_SECRET_KEY")
-	fmt.Println("\n\n THE CODE: ", unidoc_key, "\n\n")
 
 	// All attempts at routes that aren't
 	// mounted at /v1 should take you to
@@ -99,7 +98,7 @@ func main() {
 
 	err = license.SetMeteredKey(unidoc_key)
 	if err != nil {
-		fmt.Printf("error with unicode key: ", err)
+		fmt.Printf("error with unicode key: %v", err)
 	}
 
 	authApp.GET("/dashboard", func(c echo.Context) error {

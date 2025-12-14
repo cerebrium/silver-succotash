@@ -23,8 +23,7 @@ func GetStations(c echo.Context) error {
 
 	all_stations, err := stations.ReadAll(cc.Db)
 	if err != nil {
-
-		c.Logger().Errorf("could not read all stations: ", err)
+		c.Logger().Errorf("could not read all stations: %v", err)
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not get all stations",
 		})

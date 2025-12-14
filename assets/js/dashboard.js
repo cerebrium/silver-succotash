@@ -282,7 +282,7 @@ class UploadFile {
       const form_inputs = this.weights_form.querySelectorAll("input");
 
       for (const el of form_inputs) {
-        if (j_weights[el.id]) {
+        if (j_weights[el.id] !== undefined) {
           el.value = parseFloat(j_weights[el.id] * 100).toFixed(1);
         }
       }

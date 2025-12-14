@@ -47,7 +47,7 @@ func UpdateStation(c echo.Context) error {
 
 	err = station.Update(cc.Db)
 	if err != nil {
-		c.Logger().Errorf("could not update:", err)
+		c.Logger().Errorf("could not update: %v", err)
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "could not update",
 		})

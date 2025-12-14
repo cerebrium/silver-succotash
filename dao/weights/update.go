@@ -7,8 +7,8 @@ import (
 
 func (w Weights) Update(db *sql.DB) error {
 	query := `
-		UPDATE weights 
-		SET dcr = ?, dnrDpmo = ?, ce = ?, pod = ?, cc = ?, dex = ?, lor = ?, CdfDpmo = ?, Psb = ?
+		UPDATE weights
+		SET dcr = ?, DnrDpmo = ?, ce = ?, pod = ?, cc = ?, dex = ?, lor = ?, CdfDpmo = ?, Psb = ?
 		WHERE ID = ?;
 	`
 	result, err := db.Exec(query, w.Dcr, w.DnrDpmo, w.Ce, w.Pod, w.Cc, w.Dex, w.Lor, w.CdfDpmo, w.Psb, w.ID)
