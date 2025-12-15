@@ -21,7 +21,6 @@ import (
 	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/unidoc/unipdf/v3/common/license"
 	"golang.org/x/time/rate"
 )
 
@@ -75,8 +74,6 @@ func main() {
 	// Serve the htmx and other assets
 	app.Static("/assets", "assets")
 
-	unidoc_key := os.Getenv("UNICODE_SECRET_KEY")
-
 	// All attempts at routes that aren't
 	// mounted at /v1 should take you to
 	// the auth page. If Authenticated, it
@@ -95,11 +92,6 @@ func main() {
 
 	// Add user struct to context
 	authApp.Use(localware.AddLocalUser)
-
-	err = license.SetMeteredKey(unidoc_key)
-	if err != nil {
-		fmt.Printf("error with unicode key: %v", err)
-	}
 
 	authApp.GET("/dashboard", func(c echo.Context) error {
 		return dashboard.DashboardHandler(c)
